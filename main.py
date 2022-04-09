@@ -1,17 +1,6 @@
-import names
-
-class NPC:
-    def __init__(self, name: str, age: int):
-        self.name = name
-        self.age = age
-        
-    def __str__(self) -> str:
-        return f'<Person;Name:{self.name},Age{self.age}>'
-
-Vector = list[NPC]
-
+import map as map_tools
 
 if __name__ == '__main__':
-    print(names.get_full_name())
+    (room_list, map) = map_tools.new_map_rooms_and_corridors(30, 6, 10)
 
-    
+    map_tools.draw_map(map)
