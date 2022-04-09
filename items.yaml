@@ -1,0 +1,32 @@
+weapons:
+  Revolver:
+    description: an old battered revolver
+    detailedDesciption: On closer inspection, the firearm must be at least 100 years old, but there is nothing else notable about it.
+    damage: 5
+
+  Katana:
+    description: a traditional Japanese katana
+    damage: 7
+
+  Swiss Army Knife:
+    desription: an abandoned swiss army knife
+    damage: 3
+
+  Frying Pan:
+    description: a large cast-iron skillet
+    damage: 2
+
+  Snake:
+    description: a ball python
+    detailedDescription: Who let a snake into the dungeon?
+    damage: 4
+
+  Baton:
+    description: a lonely baton
+    detailedDescription: It's a baton. What else is there to say?
+    damage: 3
+
+  Machete:
+    description: a large Machete knife
+    detailedDescription: "It's a big knife, good at doing what knives do best: cutting stuff."
+    damage: 4
