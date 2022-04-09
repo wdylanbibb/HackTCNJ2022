@@ -8,46 +8,34 @@ import curses
 from utils import Point
 
 class Game:
-    def __init__(self, map, player) -> None:
-        self.player = player
-        self.map = map
+    def __init__(self) -> None:
+        self.room_list, self.map = map_tools.new_map_rooms_and_corridors(30, 6, 10)
+        self.player = Player(Point(self.room_list[0].center()[0], self.room_list[0].center()[1]), "Player", 100, 1, 1)
 
     def draw_map(self, stdscr):
         for x in range(map_tools.MAP_WIDTH):
             for y in range(map_tools.MAP_HEIGHT):
                 match self.map[map_tools.xy_idx(x, y)]:
                     case map_tools.TileType.WALL:
-                        stdscr.addstr(y, x, '#')
+                        stdscr.addch(y, x, '#')
                         pass
                     case map_tools.TileType.FLOOR:
-                        stdscr.addstr(y, x, '.')
+                        stdscr.addch(y, x, '.')
                         pass
 
     def draw_player(self, stdscr):
-        stdscr.addstr(self.player.position.y, self.player.position.x, '@')
+        stdscr.addch(self.player.position.y, self.player.position.x, '@')
 
     def draw(self, stdscr):
         # draw map
         self.draw_map(stdscr)
+        # height, width = stdscr.getmaxyx()
+        # stdscr.addstr(0, 0, f'{width} {height}')
+        
         self.draw_player(stdscr)
 
-# if __name__ == '__main__':
-#     (room_list, map) = map_tools.new_map_rooms_and_corridors(30, 6, 10)
 
-#     for room in room_list:
-#         (x, y) = room.center()
-#         # add_random_enemy(random.randint(room.x, room.x + room.width), random.randint(room.y, room.y + room.height))
-#         # add_random_item(random.randint(room.x, room.x + room.width), random.randint(room.y, room.y + room.height))
-
-#     map_tools.draw_map(map)
-
-
-
-def draw_player(stdscr):
-    curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_CYAN)
-    stdscr.addch(1, 1, '@', curses.color_pair(4))
-
-def draw(stdscr, gs):
+def game_loop(stdscr, gs):
     kk = 0
     k = 0
     height, width = stdscr.getmaxyx()
@@ -94,12 +82,10 @@ def draw(stdscr, gs):
         stdscr.refresh()
 
 def main():
-    room_list, map = map_tools.new_map_rooms_and_corridors(30, 6, 10)
-    player = Player(Point(room_list[0].center()[0], room_list[0].center()[1]), "Player", 100, 1)
 
-    gs = Game(map, player)
+    gs = Game()
 
-    curses.wrapper(draw, gs)
+    curses.wrapper(game_loop, gs)
 
 if __name__ == "__main__":
     main()
