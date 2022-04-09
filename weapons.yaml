@@ -6,14 +6,17 @@ weapons:
 
   Katana:
     description: a traditional Japanese katana
+    detailedDesciption: How- You know what, I'm not gonna ask.
     damage: 7
 
   Swiss Army Knife:
     desription: an abandoned swiss army knife
+    detailedDesciption: The Swiss love their knives versatile.
     damage: 3
 
   Frying Pan:
     description: a large cast-iron skillet
+    detailedDesciption: Yum, is that chicken residue still stuck to the bottom?
     damage: 2
 
   Snake:
@@ -30,3 +33,18 @@ weapons:
     description: a large Machete knife
     detailedDescription: "It's a big knife, good at doing what knives do best: cutting stuff."
     damage: 4
+
+  Drumstick:
+    description: a drumstick
+    detailedDesciption: There are no drums to be found nearby...
+    damage: 1
+
+  Pepper Spray:
+    description: a half-empty can of pepper spray
+    detailedDesciption: Pepper in spray form. It's very effective at burning one's eyes. Do be careful.
+    damage: 5
+
+  Sludgehammer:
+    description: a typical sludgehammer
+    detailedDesciption: It's sopping wet. Wait, did you read that right?
+    damage: 6

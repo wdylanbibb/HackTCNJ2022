@@ -1,7 +1,8 @@
 from utils import Point
 
 class Player:
-    def __init__(self, position: Point, name: str, health: int, speed: int) -> None:
+    def __init__(self, position: Point, name: str, health: int, strength: int, attackSpeed: int) -> None:
         self.name = name
-        self.stats = { 'health': health, 'speed': speed }
+        self.hp = health
+        self.stats = { 'strength': strength, 'attackSpeed': attackSpeed }
         self.position = position
