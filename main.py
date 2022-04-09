@@ -8,7 +8,6 @@ import curses
 from utils import Point
 
 class Game:
-<<<<<<< HEAD
     def __init__(self, map, player) -> None:
         self.player = player
         self.map = map
@@ -99,11 +98,6 @@ def main():
     player = Player(Point(room_list[0].center()[0], room_list[0].center()[1]), "Player", 100, 1)
 
     gs = Game(map, player)
-=======
-    def __init__(self) -> None:
-        self.player = Player()
-    
->>>>>>> c040b99473b4dd2a30ef358fe09b23ca1300b251
 
     curses.wrapper(draw, gs)
 
