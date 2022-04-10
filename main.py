@@ -53,7 +53,7 @@ class Game:
             else:
                 stdscr.addstr(item.position.y, item.position.x, 'f')
 
-            
+
     def draw_npcs(self, stdscr):
         for npc in self.npcs:
             stdscr.addstr(npc.position.y, npc.position.x, 'n')
@@ -142,7 +142,7 @@ def game_loop(stdscr, gs):
             curses.resize_term(0, 0)
         stdscr.erase()
         height, width = stdscr.getmaxyx()
-        print(height, width)
+        # print(height, width)
 
         # if k == curses.KEY_RESIZE:
         #     stdscr.addstr(0, 0, f'{width}, {height}')

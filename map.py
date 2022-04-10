@@ -43,7 +43,7 @@ def new_map_rooms_and_corridors(max_rooms: int, min_size: int, max_size: int, ma
     MAP_WIDTH = map_width
     MAP_HEIGHT = map_height
     MAP_SIZE = MAP_WIDTH * MAP_HEIGHT
-    
+
     map = [TileType.WALL] * MAP_SIZE
 
     rooms: list[Rect] = []

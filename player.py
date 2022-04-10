@@ -12,16 +12,16 @@ class Player:
         self.inventory = []
 
     def input(self, event, gs):
-        if event == ord('h'):
+        if event == ord('h') or event == curses.KEY_LEFT:
             if gs.map[map.p_idx(self.position + Point(-1, 0))] == map.TileType.FLOOR:
                 self.position += Point(-1, 0)
-        elif event == ord('j'):
-            if gs.map[map.p_idx(self.position + Point(0, -1))] == map.TileType.FLOOR:
-                self.position += Point(0, 1)
-        elif event == ord('k'):
+        elif event == ord('j') or event == curses.KEY_DOWN:
             if gs.map[map.p_idx(self.position + Point(0, 1))] == map.TileType.FLOOR:
+                self.position += Point(0, 1)
+        elif event == ord('k') or event == curses.KEY_UP:
+            if gs.map[map.p_idx(self.position + Point(0, -1))] == map.TileType.FLOOR:
                 self.position += Point(0, -1)
-        elif event == ord('l'):
+        elif event == ord('l') or event == curses.KEY_RIGHT:
             if gs.map[map.p_idx(self.position + Point(1, 0))] == map.TileType.FLOOR:
                 self.position += Point(1, 0)
         items = [i for i in gs.items if i.position == self.position]
