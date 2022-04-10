@@ -69,7 +69,7 @@ class Game:
 
         draw_label(stdscr, Point(2, 30), " " + self.player.name + " ")
 
-        draw_label(stdscr, Point(20, 30), " " + str(int(self.player.hp)) + " / " + str(self.player.max_hp) + " ")
+        draw_label(stdscr, Point(max(20, len(self.player.name) + 6), 30), " " + str(int(self.player.hp)) + " / " + str(self.player.max_hp) + " ")
 
         log.draw_messages(stdscr)
 
