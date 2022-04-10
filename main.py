@@ -67,8 +67,8 @@ class Game:
         self.draw_items(stdscr)
         self.draw_enemies(stdscr)
         self.draw_npcs(stdscr)
-        draw_inventory(stdscr, self.player.inventory)
         self.draw_player(stdscr)
+        draw_inventory(stdscr, self.player.inventory)
         self.draw_ui(stdscr)
 
     def populate_rooms(self):

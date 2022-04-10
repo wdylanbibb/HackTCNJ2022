@@ -1,4 +1,4 @@
-from draw import dec_index, inc_index, is_show_inventory, toggle_inventory
+from draw import dec_index, get_idx, inc_index, is_show_inventory, toggle_inventory
 import map
 from utils import Point
 import curses
@@ -15,7 +15,7 @@ class Player:
 
     def input(self, event, gs):
         if event == ord('h') or event == curses.KEY_LEFT:
-            if not is_show_inventory:
+            if not is_show_inventory():
                 if gs.map[map.p_idx(self.position + Point(-1, 0))] == map.TileType.FLOOR:
                     self.position += Point(-1, 0)
                     log.log_message("You step.")

@@ -1,4 +1,4 @@
-from operator import inv
+from log import log_message
 from utils import Point, Rect
 
 
@@ -20,12 +20,14 @@ def draw_label_centered(stdscr, y: int, msg: str):
 showInventory = False
 invIndex = 0
 invStartIdx = 0
+lastIndex = -1
 
 def toggle_inventory():
     global showInventory, invIndex, invStartIdx
     showInventory = not showInventory
     invIndex = 0
     invStartIdx = 0
+    lastIndex = -1
 
 def is_show_inventory():
     return showInventory
@@ -38,8 +40,12 @@ def dec_index():
     global invIndex
     invIndex -= 1
 
+def get_idx():
+    return invIndex
+
 def draw_inventory(stdscr, inventory):
-    global showInventory, invIndex, invStartIdx
+    global showInventory, invIndex, invStartIdx, lastIndex
+
     if showInventory:
         if invIndex < invStartIdx:
             if invStartIdx == 0:
@@ -61,3 +67,6 @@ def draw_inventory(stdscr, inventory):
             draw_label(stdscr, Point(18, 14 + idx * 2), ('> ' if idx + invStartIdx == invIndex else '') + item.name)
         if len(inventory) - 1 > invStartIdx + 5:
             draw_label(stdscr, Point(40, 27), 'v')
+        if invIndex >= 0 and lastIndex != invIndex:
+            log_message(inventory[invIndex].detailedDesc)
+        lastIndex = invIndex
