@@ -31,11 +31,11 @@ class Player:
 
         for npc in npcs:
             # dialog
-            log_message(f'> {npc.name} - "{npc.next_message()}"')
+            npc.talk()
             return PlayerInputResult.Talk
         for enemy in enemies:
             # attack
-            log.log_message(f'{enemy.type} growls at you, but their feet stay planted in the ground.')
+            enemy.attack()
             return PlayerInputResult.Attack
 
         if gs.map[map.p_idx(self.position + new_position)] == map.TileType.FLOOR:
@@ -54,6 +54,19 @@ class Player:
                 return self.attempt_movement(gs, Point(0, -1))
             elif event == ord('l') or event == curses.KEY_RIGHT:
                 return self.attempt_movement(gs, Point(1, 0))
+
+            elif event == ord('g'):
+                items = [item for item in gs.items if item.position == self.position]
+                for item in items:
+                    item.position = None
+                    gs.items.remove(item)
+                    self.inventory.append(item)
+                    log_message(f'You pick up the {item.name}.')
+                if len(items) > 0:
+                    return PlayerInputResult.PickUp
+                else:
+                    log_message('There was nothing to pick up.')
+                    return PlayerInputResult.Nothing
         else:
             if event == ord('j') or event == curses.KEY_DOWN:
                 inc_index()
@@ -62,8 +75,6 @@ class Player:
             elif event == curses.KEY_SPACE:
                 if not self.inventory[get_idx()].use(self):
                     self.inventory.pop(get_idx())
-
-            return PlayerInputResult.Nothing
 
         if event == ord('i'):
             toggle_inventory()

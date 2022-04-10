@@ -1,5 +1,5 @@
 import random
-import log
+from log import log_message
 import names
 from items import Item
 from utils import Point
@@ -24,6 +24,13 @@ class NPC:
 
     def __str__(self) -> str:
         return f'<Person - Name: {self.name}>'
+
+    def talk(self):
+        log_message(f'{self.name} says hello.')
+
+    def turn(self, gs):
+        if gs.player.position.distance(self.position) < 7:
+            log_message(f'{self.name} stands around.')
 
     def next_message(self):
         if self.numVisited == 0:

@@ -1,4 +1,5 @@
 from __future__ import annotations
+import math
 
 class Rect:
     def __init__(self, x: int, y: int, width: int, height: int) -> None:
@@ -32,12 +33,12 @@ class Point:
 
     def __str__(self) -> str:
         return f'({self.x}, {self.y})'
-    
+
     def __add__(self, other):
         x = self.x + other.x
         y = self.y + other.y
         return Point(x, y)
-    
+
     def __sub__(self, other):
         x = self.x - other.x
         y = self.y - other.y
@@ -45,3 +46,6 @@ class Point:
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
+
+    def distance(self, other: Point) -> float:
+        return math.sqrt((other.x - self.x) ** 2 + (other.y - self.y) ** 2)

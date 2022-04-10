@@ -27,12 +27,11 @@ invStartIdx = 0
 lastIndex = -1
 
 def toggle_inventory() -> bool:
-    global showInventory, invIndex, invStartIdx
+    global showInventory, invIndex, invStartIdx, lastIndex
     showInventory = not showInventory
     invIndex = 0
     invStartIdx = 0
     lastIndex = -1
-    return showInventory
 
 def is_show_inventory():
     return showInventory
