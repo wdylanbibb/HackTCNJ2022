@@ -1,12 +1,12 @@
+import requests
 from NPC import get_random_NPC
 from draw import draw_box, draw_inventory, draw_label, draw_label_centered, toggle_inventory
 from enemy import get_random_enemy
-from items import BuffItem, HealthItem, Weapon
+from items import Weapon
 from player import Player, PlayerInputResult
 import random
 import map as map_tools
 import log
-from enum import Enum
 
 import curses
 
@@ -112,6 +112,8 @@ class Game:
         for npc in self.npcs:
             npc.turn(self)
 
+leaderboard = False
+
 def game_loop(stdscr, gs):
     kk = 0
     k = 0
@@ -172,6 +174,7 @@ def game_loop(stdscr, gs):
 
         cursor_y = max(0, cursor_y)
         cursor_y = min(height-1, cursor_y)
+        global leaderboard
 
 
         if height <= 37 - 1 or width <= 80 - 1:
@@ -181,14 +184,31 @@ def game_loop(stdscr, gs):
         elif gs.is_dead:
             curses.curs_set(0)
             draw_box(stdscr, Rect(0, 0, width - 1, height - 1))
-            draw_label_centered(stdscr, (height // 2) - 7, '   _____                         ____                 ')
-            draw_label_centered(stdscr, (height // 2) - 6, '  / ____|                       / __ \                ')
-            draw_label_centered(stdscr, (height // 2) - 5, ' | |  __  __ _ _ __ ___   ___  | |  | |_   _____ _ __ ')
-            draw_label_centered(stdscr, (height // 2) - 4, " | | |_ |/ _` | '_ ` _ \ / _ \ | |  | \ \ / / _ \ '__|")
-            draw_label_centered(stdscr, (height // 2) - 3, ' | |__| | (☠| | | | | | |  __/ | |__| |\ V /  __/ |   ')
-            draw_label_centered(stdscr, (height // 2) - 2, '  \_____|\__,_|_| |_| |_|\___|  \____/  \_/ \___|_|   ')
-            draw_label_centered(stdscr, (height // 2) - 1, '                                                      ')
-            draw_label_centered(stdscr, (height // 2), '☠ Press Q to Quit ☠')
+            if not leaderboard:
+                draw_label_centered(stdscr, (height // 2) - 7, '   _____                         ____                 ')
+                draw_label_centered(stdscr, (height // 2) - 6, '  / ____|                       / __ \                ')
+                draw_label_centered(stdscr, (height // 2) - 5, ' | |  __  __ _ _ __ ___   ___  | |  | |_   _____ _ __ ')
+                draw_label_centered(stdscr, (height // 2) - 4, " | | |_ |/ _` | '_ ` _ \ / _ \ | |  | \ \ / / _ \ '__|")
+                draw_label_centered(stdscr, (height // 2) - 3, ' | |__| | (☠| | | | | | |  __/ | |__| |\ V /  __/ |   ')
+                draw_label_centered(stdscr, (height // 2) - 2, '  \_____|\__,_|_| |_| |_|\___|  \____/  \_/ \___|_|   ')
+                draw_label_centered(stdscr, (height // 2) - 1, '                                                      ')
+                draw_label_centered(stdscr, (height // 2), 'Press l to view leaderboard.');
+                draw_label_centered(stdscr, (height // 2) + 1, '☠ Press Q to Quit ☠')
+            else:
+                draw_label_centered(stdscr, 3, '  _      ______          _____  ______ _____  ____   ____          _____  _____  ')
+                draw_label_centered(stdscr, 4, ' | |    |  ____|   /\   |  __ \|  ____|  __ \|  _ \ / __ \   /\   |  __ \|  __ \ ')
+                draw_label_centered(stdscr, 5, ' | |    | |__     /  \  | |  | | |__  | |__) | |_) | |  | | /  \  | |__) | |  | |')
+                draw_label_centered(stdscr, 6, ' | |    |  __|   / /\ \ | |  | |  __| |  _  /|  _ <| |  | |/ /\ \ |  _  /| |  | |')
+                draw_label_centered(stdscr, 7, ' | |____| |____ / ____ \| |__| | |____| | \ \| |_) | |__| / ____ \| | \ \| |__| |')
+                draw_label_centered(stdscr, 8, ' |______|______/_/    \_\_____/|______|_|  \_\____/ \____/_/    \_\_|  \_\_____/ ')
+                draw_label_centered(stdscr, 9, '─────────────────────────────────────────────────────────────────────────────────')
+                highscores = requests.get('https://dungeon-of-curses.herokuapp.com/highscores').json()
+                for i, score in enumerate(highscores):
+                    draw_label_centered(stdscr, i + 11, f'{score["user"]}: {score["score"]} points')
+                draw_label_centered(stdscr, 20, 'Press l to stop viewing leaderboard.');
+                draw_label_centered(stdscr, 21, '☠ Press Q to Quit ☠')
+            if (k == ord('l')):
+                leaderboard = not leaderboard
         else:
             gs.draw(stdscr)
 
