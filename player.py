@@ -46,7 +46,7 @@ class Player:
             self.inventory.append(item)
         if len(npc) != 0:
             npc = npc[0]
-            # dialog
+            log_message(f'> {npc.name} - "{npc.next_message()}"')
             pass
         if len(enemy) != 0:
             enemy = enemy[0]

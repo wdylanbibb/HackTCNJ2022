@@ -5,11 +5,23 @@ import requests
 from items import BuffItem, HealthItem, Weapon, Item
 
 items = None
+npcLines = None
 
 def import_items():
-    global items
+    global items, npcLines
     with open('weapons.yaml') as file:
         items = yaml.safe_load(file)
+    with open('npcs.yaml') as file:
+        npcLines = yaml.safe_load(file)
+
+def get_random_primary_line():
+    return random.choice(npcLines['primary'])
+
+def get_random_return_line():
+    return random.choice(npcLines['return'])
+
+def get_annoyed_dialog():
+    return random.choice(npcLines['annoyed'])
 
 def get_random_weapon() -> Weapon:
     weapons = items['weapons']
