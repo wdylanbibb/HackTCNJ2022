@@ -1,11 +1,15 @@
 from __future__ import annotations
-from enum import Enum
+from enum import IntEnum
 import random
 from utils import Point, Rect
 
-class TileType(Enum):
-    WALL = 1
-    FLOOR = 0
+from pathfinding.core.diagonal_movement import DiagonalMovement
+from pathfinding.core.grid import Grid
+from pathfinding.finder.a_star import AStarFinder
+
+class TileType(IntEnum):
+    WALL = 0
+    FLOOR = 1
 
 MAP_WIDTH = 80
 MAP_HEIGHT = 30
@@ -94,3 +98,15 @@ def print_2d_map(map: Map):
                 case TileType.WALL:
                     print('#', end='')
         print()
+
+
+def get_path_to(map, start, end):
+    grid = Grid(matrix=get_2d_map(map))
+    
+    start = grid.node(start.x, start.y)
+    end = grid.node(end.x, end.y)
+
+    finder = AStarFinder(diagonal_movement=DiagonalMovement.never)
+    path, _ = finder.find_path(start, end, grid)
+
+    return path

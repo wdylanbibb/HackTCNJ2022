@@ -37,7 +37,7 @@ class Player:
             return PlayerInputResult.Talk
         for enemy in enemies:
             # attack
-            self.attack(enemy)
+            self.attack(gs, enemy)
             return PlayerInputResult.Attack
 
         if gs.map[map.p_idx(self.position + new_position)] == map.TileType.FLOOR:
@@ -96,12 +96,19 @@ class Player:
 
         return PlayerInputResult.Nothing
 
-    def attack(self, enemy):
+    def game_over(self):
+        pass
+
+    def attack(self, gs, enemy):
         noneEquipped = self.equipped is None
         if noneEquipped:
             self.equipped = Weapon('your fists', 'your fists', 'Just your fists.', 2)
         for atk in range(self.stats['attackSpeed']):
-            if enemy.damage(self.equipped.atk * (abs(self.stats['strength'] - 1) * .9 + 1)):
+            dmg = self.equipped.atk * (abs(self.stats['strength'] - 1) * .1 + 1)
+            log_message(f'You deal {dmg} damage to {enemy.type}')
+            if enemy.damage(dmg):
+                log_message(f'{enemy.type} has been vanquished!')
+                gs.enemies.remove(enemy)
                 return
         if noneEquipped:
             self.equipped = None
@@ -109,8 +116,8 @@ class Player:
     def damage(self, amt, enemy):
         self.hp -= amt
         if self.hp <= 0:
-            game_over()
-            log_message(f'You were defeated by {enemy.name}. Game over.')
+            self.game_over()
+            log_message(f'You were defeated by {enemy.type}. Game over.')
 
     def equip_weapon(self, weapon):
         self.equipped = weapon
