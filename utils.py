@@ -47,5 +47,8 @@ class Point:
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
 
+    def copy(self):
+        return Point(self.x, self.y)
+
     def distance(self, other: Point) -> float:
         return math.sqrt((other.x - self.x) ** 2 + (other.y - self.y) ** 2)

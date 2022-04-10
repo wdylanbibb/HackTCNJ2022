@@ -1,4 +1,5 @@
 import math
+import re
 from log import log_message
 from utils import Point
 
@@ -74,9 +75,9 @@ class BuffItem(Item):
     def use(self, player):
         player.stats[self.stat] += self.buff
         if self.buff > 0:
-            log_message(f'You drank the {self.name} and suddenly gained {str(self.buff)} {" ".join([i.lower() for i in self.stat.split(r"[A-Z]")])}!')
+            log_message(f'You drank the {self.name} and suddenly gained {str(self.buff)} {" ".join([i.lower() for i in re.split(r"[A-Z]", self.stat)])}!')
         else:
-            log_message(f'You drank the {self.name} and suddenly lost {str(self.buff)} {" ".join([i.lower() for i in self.stat.split(r"[A-Z]")])}!')
+            log_message(f'You drank the {self.name} and suddenly lost {str(self.buff)} {" ".join([i.lower() for i in re.split(r"[A-Z]", self.stat)])}!')
         return False
 
     def __str__(self) -> str:

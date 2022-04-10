@@ -15,6 +15,7 @@ class PlayerInputResult(Enum):
     PickUp = 5
     Wait = 7
     Nothing = 8
+    DropItem = 9
 
 class Player:
     def __init__(self, position: Point, name: str, health: int, strength: int, attackSpeed: int) -> None:
@@ -36,7 +37,7 @@ class Player:
             return PlayerInputResult.Talk
         for enemy in enemies:
             # attack
-            enemy.attack()
+            self.attack(enemy)
             return PlayerInputResult.Attack
 
         if gs.map[map.p_idx(self.position + new_position)] == map.TileType.FLOOR:
@@ -80,11 +81,29 @@ class Player:
                 if not self.inventory[get_idx()].use(self):
                     self.inventory.pop(get_idx())
                 return PlayerInputResult.UseItem
+            elif event == ord('g'):
+                item = self.inventory[get_idx()]
+                item.position = self.position.copy()
+                gs.items.append(item)
+                self.inventory.remove(item)
+                log_message(f'You drop the {item.name}.')
+                if item == self.equipped:
+                    self.unequip_weapon()
+                return PlayerInputResult.DropItem
 
         if event == ord('i'):
             toggle_inventory()
 
         return PlayerInputResult.Nothing
+
+    def attack(self, enemy):
+        noneEquipped = self.equipped is None
+        if noneEquipped:
+            self.equipped = Weapon('your fists', 'your fists', 'Just your fists.', 2)
+        for atk in range(self.stats['attackSpeed']):
+            enemy.deal_damage(self.equipped.atk * (abs(self.stats['strength'] - 1) * .9 + 1))
+        if noneEquipped:
+            self.equipped = None
 
     def equip_weapon(self, weapon):
         self.equipped = weapon
