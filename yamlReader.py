@@ -46,6 +46,3 @@ def get_random_potion() -> Item:
     amt = random.randint(1, 3)
     if random.randint(1, 10) == 1: amt *= -1
     return BuffItem(drink['strDrink'], drink['strDrink'], f'In a glass is an intoxicating {drink["strDrink"]}.', ['strength', 'attackSpeed'][stat], amt)
-
-import_items()
-print(get_random_primary_line())
