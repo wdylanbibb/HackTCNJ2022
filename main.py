@@ -4,6 +4,7 @@ from items import BuffItem, HealthItem, Weapon
 from player import Player
 import random
 import map as map_tools
+import log
 
 import curses
 
@@ -66,23 +67,25 @@ class Game:
         stdscr.addch(self.player.position.y, self.player.position.x, '@')
 
     def draw_ui(self, stdscr):
-        draw_box(stdscr, Rect(0, 40, 80, 8))
+        draw_box(stdscr, Rect(0, 30, 80, 6))
 
-        draw_label(stdscr, Point(2, 40), self.player.name)
+        draw_label(stdscr, Point(2, 30), " " + self.player.name + " ")
 
-        draw_label(stdscr, Point(20, 40), str(self.player.hp) + " / " + str(self.player.max_hp))
+        draw_label(stdscr, Point(20, 30), " " + str(self.player.hp) + " / " + str(self.player.max_hp) + " ")
+        
+        log.draw_messages(stdscr)
 
     def draw(self, stdscr):
         # draw map
         self.draw_map(stdscr)
+        self.draw_items(stdscr)
+        self.draw_enemies(stdscr)
+        self.draw_npcs(stdscr)
         self.draw_player(stdscr)
         self.draw_ui(stdscr)
-        self.draw_enemies(stdscr)
-        self.draw_items(stdscr)
-        self.draw_npcs(stdscr)
 
     def populate_rooms(self):
-        for room in self.room_list:
+        for room in self.room_list[1:]:
             itemNum = random.randint(0, room.width // 5)
             usedPoints: list[Point] = [Point(room.x + (room.width // 2), room.y + (room.height // 2))]
             for i in range(itemNum):
@@ -135,6 +138,8 @@ def game_loop(stdscr, gs):
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
+    log.log_message("Welcome to the Dungeon of Curses!")
+
     # Loop where k is the last character pressed
     while (k != ord('q')):
         # Initialization
@@ -160,9 +165,9 @@ def game_loop(stdscr, gs):
         cursor_y = min(height-1, cursor_y)
 
 
-        if height <= 50 - 1 or width <= 80 - 1:
+        if height <= 37 - 1 or width <= 80 - 1:
             draw_label_centered(stdscr, (height // 2) - 1, 'Your screen is too small!')
-            draw_label_centered(stdscr, (height // 2), 'Required: 80x50')
+            draw_label_centered(stdscr, (height // 2), 'Required: 80x37')
             draw_label_centered(stdscr, (height // 2) + 1, f'Current Size: {width}x{height}')
         else:
             gs.draw(stdscr)

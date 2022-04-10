@@ -1,6 +1,7 @@
 import map
 from utils import Point
 import curses
+import log
 
 class Player:
     def __init__(self, position: Point, name: str, health: int, strength: int, attackSpeed: int) -> None:
@@ -14,6 +15,7 @@ class Player:
         if event == ord('h') or event == curses.KEY_LEFT:
             if gs.map[map.p_idx(self.position + Point(-1, 0))] == map.TileType.FLOOR:
                 self.position += Point(-1, 0)
+                log.log_message("You step.")
         elif event == ord('j') or event == curses.KEY_DOWN:
             if gs.map[map.p_idx(self.position + Point(0, 1))] == map.TileType.FLOOR:
                 self.position += Point(0, 1)
