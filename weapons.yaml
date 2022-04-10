@@ -55,17 +55,17 @@ weapons:
     damage: 6
 
   Elephant Tusk:
-    desciption: a shiny white elephant tusk
+    description: a shiny white elephant tusk
     detailedDescription: This would probably do some pretty good damage. Is this why poachers are so profitable?
     damage: 4
 
   Didgeridoo:
-    desciption: an authentic Australian aboriginal didgeridoo
+    description: an authentic Australian aboriginal didgeridoo
     detailedDescription: How do you even carry that around? It's taller than you!
     damage: 3
 
   Molotov Cocktail:
-    desciption: a bottle with a fuel-soaked rag
+    description: a bottle with a fuel-soaked rag
     detailedDescription: A very different kind of cocktail, but... it'll do, I suppose.
     damage: 5
 
@@ -75,7 +75,7 @@ weapons:
     damage: 3
 
   Air Horn:
-    desciption: an everyday air horn
+    description: an everyday air horn
     detailedDescription: Aural warfare!
     damage: 4
   
