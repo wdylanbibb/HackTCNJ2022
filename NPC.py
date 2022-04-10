@@ -23,6 +23,9 @@ class NPC:
 
     def talk(self):
         log.log_message(f'{self.name} says hello.')
+    
+    def move(self):
+        pass
 
 def get_random_NPC():
     return NPC(names.get_full_name())

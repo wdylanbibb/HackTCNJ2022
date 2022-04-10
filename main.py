@@ -100,6 +100,12 @@ class Game:
                 point = usedPoints[0]
 
                 self.enemies.append(get_random_enemy().set_position(point))
+    
+    def enemy_move():
+        pass
+
+    def npc_move():
+        pass
 
 
 def game_loop(stdscr, gs):

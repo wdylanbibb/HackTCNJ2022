@@ -1,5 +1,7 @@
+
 import random
 from items import Weapon
+from log import log_message
 from utils import Point
 from yamlReader import get_random_weapon
 
@@ -17,6 +19,12 @@ class Enemy:
     def set_position(self, position: Point):
         self.position = position
         return self
+
+    def attack(self):
+        log_message(f'{self.type.title()} growls at you.')
+    
+    def move(self):
+        pass
 
 def get_random_enemy():
     choices = ['an ogre', 'a goblin', 'a werewolf', 'an insurance salesman', 'Tom Cruise', 'your mother', 'a ball python', 'Yellow-bellied ferret']
