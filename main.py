@@ -120,19 +120,19 @@ class Game:
         for npc in self.npcs:
             npc.turn(self)
 
+    def delve_deeper(self):
+        self.room_list, self.map = map_tools.new_map_rooms_and_corridors(30, 6, 10)
+        self.player.position = Point(self.room_list[0].center()[0], self.room_list[0].center()[1])
+        self.items = []
+        self.enemies = []
+        self.npcs = []
+        import_items()
+        self.populate_rooms()
+        self.depth += 1
+
+        log.clear_log()
+        log.log_message("You descend into the dungeon...")
 leaderboard = False
-def delve_deeper(self):
-    self.room_list, self.map = map_tools.new_map_rooms_and_corridors(30, 6, 10)
-    self.player.position = Point(self.room_list[0].center()[0], self.room_list[0].center()[1])
-    self.items = []
-    self.enemies = []
-    self.npcs = []
-    import_items()
-    self.populate_rooms()
-    self.depth += 1
-    
-    log.clear_log()
-    log.log_message("You descend into the dungeon...")
 
 def game_loop(stdscr, gs):
     kk = ''
@@ -141,7 +141,7 @@ def game_loop(stdscr, gs):
     height, width = stdscr.getmaxyx()
     cursor_x = 0
     cursor_y = 0
-    
+
     stdscr.nodelay(True)
 
     # Clear and refresh the screen for a blank canvas
@@ -231,16 +231,27 @@ def game_loop(stdscr, gs):
                 draw_label_centered(stdscr, (height // 2) + 1, 'Press l to view leaderboard.')
                 draw_label_centered(stdscr, (height // 2) + 2, '☠ Press Q to Quit ☠')
             else:
-                draw_label_centered(stdscr, 3, '  _      ______          _____  ______ _____  ____   ____          _____  _____  ')
-                draw_label_centered(stdscr, 4, ' | |    |  ____|   /\   |  __ \|  ____|  __ \|  _ \ / __ \   /\   |  __ \|  __ \ ')
-                draw_label_centered(stdscr, 5, ' | |    | |__     /  \  | |  | | |__  | |__) | |_) | |  | | /  \  | |__) | |  | |')
-                draw_label_centered(stdscr, 6, ' | |    |  __|   / /\ \ | |  | |  __| |  _  /|  _ <| |  | |/ /\ \ |  _  /| |  | |')
-                draw_label_centered(stdscr, 7, ' | |____| |____ / ____ \| |__| | |____| | \ \| |_) | |__| / ____ \| | \ \| |__| |')
-                draw_label_centered(stdscr, 8, ' |______|______/_/    \_\_____/|______|_|  \_\____/ \____/_/    \_\_|  \_\_____/ ')
-                draw_label_centered(stdscr, 9, '─────────────────────────────────────────────────────────────────────────────────')
+                curses.init_pair(6, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+                curses.init_pair(7, curses.COLOR_RED, curses.COLOR_BLACK)
+                curses.init_pair(8, curses.COLOR_GREEN, curses.COLOR_BLACK)
+                curses.init_pair(9, curses.COLOR_BLUE, curses.COLOR_BLACK)
+                draw_label_centered(stdscr, 3, '  _      ______          _____  ______ _____  ____   ____          _____  _____  ', curses.color_pair(6))
+                draw_label_centered(stdscr, 4, ' | |    |  ____|   /\   |  __ \|  ____|  __ \|  _ \ / __ \   /\   |  __ \|  __ \ ', curses.color_pair(6))
+                draw_label_centered(stdscr, 5, ' | |    | |__     /  \  | |  | | |__  | |__) | |_) | |  | | /  \  | |__) | |  | |', curses.color_pair(6))
+                draw_label_centered(stdscr, 6, ' | |    |  __|   / /\ \ | |  | |  __| |  _  /|  _ <| |  | |/ /\ \ |  _  /| |  | |', curses.color_pair(6))
+                draw_label_centered(stdscr, 7, ' | |____| |____ / ____ \| |__| | |____| | \ \| |_) | |__| / ____ \| | \ \| |__| |', curses.color_pair(6))
+                draw_label_centered(stdscr, 8, ' |______|______/_/    \_\_____/|______|_|  \_\____/ \____/_/    \_\_|  \_\_____/ ', curses.color_pair(6))
+                draw_label_centered(stdscr, 9, '─────────────────────────────────────────────────────────────────────────────────', curses.color_pair(6))
                 highscores = requests.get('https://dungeon-of-curses.herokuapp.com/highscores').json()
                 for i, score in enumerate(highscores):
-                    draw_label_centered(stdscr, i + 11, f'{score["user"]}: {score["score"]} points')
+                    if i == 0:
+                        draw_label_centered(stdscr, i + 11, f'{score["user"]}: {score["score"]} points', curses.color_pair(7))
+                    elif i == 1:
+                        draw_label_centered(stdscr, i + 11, f'{score["user"]}: {score["score"]} points', curses.color_pair(8))
+                    elif i == 2:
+                        draw_label_centered(stdscr, i + 11, f'{score["user"]}: {score["score"]} points', curses.color_pair(9))
+                    else:
+                        draw_label_centered(stdscr, i + 11, f'{score["user"]}: {score["score"]} points')
                 draw_label_centered(stdscr, 20, 'Press l to stop viewing leaderboard.');
                 draw_label_centered(stdscr, 21, '☠ Press Q to Quit ☠')
             if (k == ord('l')):
