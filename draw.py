@@ -53,7 +53,7 @@ def get_idx():
     return invIndex
 
 def toggle_legend() -> bool:
-    global showInventory, showLegend, legIndex, legStartIdx, lastLegIndex
+    global showInventory, showLegend, legIndex, legStartIdx
     showLegend = not showLegend
     showInventory = False
     legIndex = 0
@@ -130,7 +130,7 @@ def draw_legend(stdscr, legend):
         if legIndex < 0 and len(legend) > 0:
             legIndex = 0
         draw_box(stdscr, Rect(15, 8, 50, 20))
-        draw_label_centered(stdscr, 10, 'LEGEND')
+        draw_label(stdscr, Point(36, 10), 'LEGEND')
         draw_label(stdscr, Point(34, 11), '─' * 10)
         if legStartIdx > 0:
             draw_label(stdscr, Point(40, 13), '☝')

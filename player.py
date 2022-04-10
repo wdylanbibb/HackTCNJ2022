@@ -55,7 +55,7 @@ class Player:
         return PlayerInputResult.Nothing
 
     def input(self, event, gs):
-        if not is_show_inventory():
+        if not is_show_inventory() and not is_show_legend():
             if event == ord('h') or event == curses.KEY_LEFT:
                 return self.attempt_movement(gs, Point(-1, 0))
             elif event == ord('j') or event == curses.KEY_DOWN:
@@ -105,7 +105,7 @@ class Player:
                 #     self.hp = min(self.hp + 1, self.max_hp)
 
                 return PlayerInputResult.Wait
-        elif is_show_legend:
+        elif is_show_legend():
             if event == ord('j') or event == curses.KEY_DOWN:
                 inc_legend_index()
             elif event == ord('k') or event == curses.KEY_UP:
