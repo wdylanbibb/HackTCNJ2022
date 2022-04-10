@@ -5,7 +5,7 @@ from utils import Point, Rect
 
 class TileType(Enum):
     WALL = 1
-    FLOOR = 2
+    FLOOR = 0
 
 MAP_WIDTH = 80
 MAP_HEIGHT = 30
@@ -74,3 +74,23 @@ def new_map_rooms_and_corridors(max_rooms: int, min_size: int, max_size: int, ma
             rooms.append(new_room)
 
     return (rooms, map)
+
+def get_2d_map(map: Map):
+    map_2d = []
+
+    for y in range(MAP_HEIGHT):
+        map_2d.append(map[xy_idx(0, y):xy_idx(0, y) + MAP_WIDTH])
+
+    return map_2d
+
+def print_2d_map(map: Map):
+    map_2d = get_2d_map(map)
+
+    for y in range(MAP_HEIGHT):
+        for x in range(MAP_WIDTH):
+            match map_2d[y][x]:
+                case TileType.FLOOR:
+                    print('.', end='')
+                case TileType.WALL:
+                    print('#', end='')
+        print()

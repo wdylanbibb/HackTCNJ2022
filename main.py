@@ -30,7 +30,7 @@ class Game:
                     case map_tools.TileType.WALL:
                         stdscr.addch(y, x, '#')
                     case map_tools.TileType.FLOOR:
-                        stdscr.addch(y, x, '.')
+                        stdscr.addch(y, x, ' ')
 
     def draw_items(self, stdscr):
         for item in self.items:
