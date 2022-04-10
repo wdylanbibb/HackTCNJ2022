@@ -67,12 +67,9 @@ class Game:
         self.draw_items(stdscr)
         self.draw_enemies(stdscr)
         self.draw_npcs(stdscr)
-<<<<<<< HEAD
         draw_inventory(stdscr, self.player.inventory)
-=======
         self.draw_player(stdscr)
         self.draw_ui(stdscr)
->>>>>>> 6058c3f82c4c84258ece2f821f5a0498aed8bf75
 
     def populate_rooms(self):
         for room in self.room_list[1:]:
