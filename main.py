@@ -5,7 +5,22 @@ import map as map_tools
 
 import curses
 
-from utils import Point
+from utils import Point, Rect
+
+def draw_box(stdscr, rect: Rect):
+    stdscr.addstr(rect.y, rect.x, "┌" + ("─" * (rect.width - 2)) + "┐")
+    for y in range(1, rect.height):
+        stdscr.addstr(rect.y + y, rect.x, "│" + (" " * (rect.width - 2)) + "│")
+    stdscr.addstr(rect.y + rect.height, rect.x, "└" + ("─" * (rect.width - 2)) + "┘")
+
+def draw_label(stdscr, pos: Point, msg: str):
+    _, width = stdscr.getmaxyx()
+
+    stdscr.addstr(pos.y, max(pos.x, 0), msg[abs(min(pos.x, 0)):width])
+
+def draw_label_centered(stdscr, y: int, msg: str):
+    _, width = stdscr.getmaxyx()
+    draw_label(stdscr, Point((width // 2) - (len(msg) // 2), y), msg)
 
 class Game:
     def __init__(self) -> None:
@@ -18,37 +33,44 @@ class Game:
                 match self.map[map_tools.xy_idx(x, y)]:
                     case map_tools.TileType.WALL:
                         stdscr.addch(y, x, '#')
-                        pass
                     case map_tools.TileType.FLOOR:
                         stdscr.addch(y, x, '.')
-                        pass
 
     def draw_player(self, stdscr):
         stdscr.addch(self.player.position.y, self.player.position.x, '@')
 
+    def draw_ui(self, stdscr):
+        draw_box(stdscr, Rect(0, 40, 80, 8))
+
+        draw_label(stdscr, Point(2, 40), self.player.name)
+
+        draw_label(stdscr, Point(20, 40), str(self.player.hp) + " / " + str(self.player.max_hp))
+
     def draw(self, stdscr):
         # draw map
         self.draw_map(stdscr)
-        # height, width = stdscr.getmaxyx()
-        # stdscr.addstr(0, 0, f'{width} {height}')
-        
+
         self.draw_player(stdscr)
+
+        self.draw_ui(stdscr)
 
 
 def game_loop(stdscr, gs):
     kk = 0
     k = 0
     height, width = stdscr.getmaxyx()
-    print(width, height)
     cursor_x = 0
     cursor_y = 0
 
-    curses.curs_set(0)
+    curses.curs_set(1)
+    stdscr.nodelay(True)
 
     # Clear and refresh the screen for a blank canvas
     stdscr.clear()
     # curses.resizeterm(50, 80)
     stdscr.refresh()
+
+    curses.mousemask(1)
 
 
     # Start colors in curses
@@ -60,8 +82,15 @@ def game_loop(stdscr, gs):
     # Loop where k is the last character pressed
     while (k != ord('q')):
         # Initialization
-        #stdscr.clear()
+        stdscr.erase()
         height, width = stdscr.getmaxyx()
+
+        # if k == curses.KEY_RESIZE:
+        #     stdscr.addstr(0, 0, f'{width}, {height}')
+        if k == curses.KEY_MOUSE:
+            _, mx, my, _, _ = curses.getmouse()
+            cursor_x = mx
+            cursor_y = my
 
         cursor_x = max(0, cursor_x)
         cursor_x = min(width-1, cursor_x)
@@ -69,7 +98,14 @@ def game_loop(stdscr, gs):
         cursor_y = max(0, cursor_y)
         cursor_y = min(height-1, cursor_y)
 
-        gs.draw(stdscr)
+
+        if height <= 50 - 1 or width <= 80 - 1:
+            draw_label_centered(stdscr, (height // 2) - 1, 'Your screen is too small!')
+            draw_label_centered(stdscr, (height // 2), 'Required: 80x50')
+            draw_label_centered(stdscr, (height // 2) + 1, f'Current Size: {width}x{height}')
+        else:
+            gs.draw(stdscr)
+        stdscr.move(cursor_y, cursor_x)
 
         # Refresh the screen
         stdscr.refresh()
@@ -77,7 +113,7 @@ def game_loop(stdscr, gs):
         # Wait for next input
         k = stdscr.getch()
 
-        kk = stdscr.getkey()
+        # kk = stdscr.getkey()
 
         stdscr.refresh()
 
