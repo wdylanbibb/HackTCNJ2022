@@ -45,7 +45,7 @@ class Game:
             elif item.cocktail:
                 stdscr.addstr(item.position.y, item.position.x, 'u')
             else:
-                stdscr.addstr(item.position.y, item.position.x, 'o')
+                stdscr.addstr(item.position.y, item.position.x, '%')
 
 
     def draw_npcs(self, stdscr):
