@@ -1,11 +1,11 @@
 from __future__ import annotations
-from enum import Enum
+from enum import IntEnum
 import random
 from utils import Point, Rect
 
-class TileType(Enum):
-    WALL = 1
-    FLOOR = 2
+class TileType(IntEnum):
+    WALL = 0
+    FLOOR = 1
 
 MAP_WIDTH = 80
 MAP_HEIGHT = 30
@@ -39,10 +39,7 @@ def apply_vertical_tunnel(map: Map, y1: int, y2: int, x: int):
         if idx > 0 and idx < MAP_WIDTH*MAP_HEIGHT:
             map[idx] = TileType.FLOOR
 
-def new_map_rooms_and_corridors(max_rooms: int, min_size: int, max_size: int, map_width = 80, map_height = 30) -> tuple(list[Rect], list[TileType]):
-    MAP_WIDTH = map_width
-    MAP_HEIGHT = map_height
-    MAP_SIZE = MAP_WIDTH * MAP_HEIGHT
+def new_map_rooms_and_corridors(max_rooms: int, min_size: int, max_size: int) -> tuple(list[Rect], list[TileType]):
 
     map = [TileType.WALL] * MAP_SIZE
 
