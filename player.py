@@ -1,7 +1,7 @@
 from hashlib import new
 
 import requests
-from draw import dec_index, get_idx, inc_index, is_show_inventory, toggle_inventory
+from draw import dec_index, dec_legend_index, get_idx, inc_index, inc_legend_index, is_show_inventory, is_show_legend, toggle_inventory, toggle_legend
 from items import Item, Weapon
 from log import log_message
 import map
@@ -105,6 +105,11 @@ class Player:
                 #     self.hp = min(self.hp + 1, self.max_hp)
 
                 return PlayerInputResult.Wait
+        elif is_show_legend:
+            if event == ord('j') or event == curses.KEY_DOWN:
+                inc_legend_index()
+            elif event == ord('k') or event == curses.KEY_UP:
+                dec_legend_index()
         else:
             if event == ord('j') or event == curses.KEY_DOWN:
                 inc_index()
@@ -127,6 +132,8 @@ class Player:
 
         if event == ord('i'):
             toggle_inventory()
+        if event == ord('/'):
+            toggle_legend()
 
         return PlayerInputResult.Nothing
 

@@ -26,9 +26,14 @@ invIndex = 0
 invStartIdx = 0
 lastIndex = -1
 
+showLegend = False
+legIndex = 0
+legStartIdx = 0
+
 def toggle_inventory() -> bool:
-    global showInventory, invIndex, invStartIdx, lastIndex
+    global showInventory, showLegend, invIndex, invStartIdx, lastIndex
     showInventory = not showInventory
+    showLegend = False
     invIndex = 0
     invStartIdx = 0
     lastIndex = -1
@@ -46,6 +51,27 @@ def dec_index():
 
 def get_idx():
     return invIndex
+
+def toggle_legend() -> bool:
+    global showInventory, showLegend, legIndex, legStartIdx, lastLegIndex
+    showLegend = not showLegend
+    showInventory = False
+    legIndex = 0
+    legStartIdx = 0
+
+def is_show_legend():
+    return showLegend
+
+def inc_legend_index():
+    global legIndex
+    legIndex += 1
+
+def dec_legend_index():
+    global legIndex
+    legIndex -= 1
+
+def get_legend_idx():
+    return legIndex
 
 def draw_inventory(stdscr, inventory, equipped):
     global showInventory, invIndex, invStartIdx, lastIndex
@@ -87,3 +113,39 @@ def draw_inventory(stdscr, inventory, equipped):
         if invIndex >= 0 and lastIndex != invIndex:
             log_message(inventory[invIndex].detailedDesc)
         lastIndex = invIndex
+
+def draw_legend(stdscr, legend):
+    global showLegend, legIndex, legStartIdx
+
+    if showLegend:
+        if legIndex < legStartIdx:
+            if legStartIdx == 0:
+                legIndex = 0
+            else:
+                legStartIdx -= 1
+        if legIndex > legStartIdx + 5:
+            legStartIdx += 1
+        if legIndex > len(legend) - 1:
+            legIndex = len(legend) - 1
+        if legIndex < 0 and len(legend) > 0:
+            legIndex = 0
+        draw_box(stdscr, Rect(15, 8, 50, 20))
+        draw_label_centered(stdscr, 10, 'LEGEND')
+        draw_label(stdscr, Point(34, 11), '─' * 10)
+        if legStartIdx > 0:
+            draw_label(stdscr, Point(40, 13), '☝')
+        offset = 0
+        for idx, item in enumerate(legend[legStartIdx:legStartIdx + 6]):
+            words = re.split(r"\s+", item['key'] + ' - ' + item['value'])
+            msg = ''
+            for word in words:
+                
+                if len(word) + 1 + len(msg) < 30:
+                    msg += word + ' '
+                else:
+                    draw_label(stdscr, Point(18, 14 + (idx + offset) * 2), ('> ' if idx + legStartIdx == legIndex else '') + msg)
+                    offset += 1
+                    msg = word + ' '
+            draw_label(stdscr, Point(18, 14 + (idx + offset) * 2), ('> ' if idx + legStartIdx == legIndex else '') + msg)
+        if len(legend) - 1 > legStartIdx + 5:
+            draw_label(stdscr, Point(40, 27), '☟')
