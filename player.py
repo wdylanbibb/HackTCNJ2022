@@ -28,6 +28,7 @@ class Player:
         self.position = position
         self.inventory = []
         self.equipped = None
+        self.score = 0
 
     def attempt_movement(self, gs, new_position: Point):
         npcs = [i for i in gs.npcs if i.position == self.position + new_position]
@@ -42,9 +43,12 @@ class Player:
             self.attack(gs, enemy)
             return PlayerInputResult.Attack
 
-        if gs.map[map.p_idx(self.position + new_position)] == map.TileType.FLOOR:
-            self.position += new_position
-            return PlayerInputResult.Move
+        match gs.map[map.p_idx(self.position + new_position)]:
+            case map.TileType.WALL:
+                pass
+            case map.TileType.FLOOR | map.TileType.DOWNSTAIR:
+                self.position += new_position
+                return PlayerInputResult.Move
 
         return PlayerInputResult.Nothing
 
@@ -58,6 +62,14 @@ class Player:
                 return self.attempt_movement(gs, Point(0, -1))
             elif event == ord('l') or event == curses.KEY_RIGHT:
                 return self.attempt_movement(gs, Point(1, 0))
+            elif event == ord('y'):
+                return self.attempt_movement(gs, Point(-1, -1))
+            elif event == ord('u'):
+                return self.attempt_movement(gs, Point(1, -1))
+            elif event == ord('b'):
+                return self.attempt_movement(gs, Point(-1, 1))
+            elif event == ord('n'):
+                return self.attempt_movement(gs, Point(1, 1))
 
             elif event == ord('g'):
                 items = [item for item in gs.items if item.position == self.position]
@@ -74,6 +86,23 @@ class Player:
                 else:
                     log_message('There was nothing to pick up.')
                     return PlayerInputResult.Nothing
+            elif event == ord('.'):
+                if gs.map[map.p_idx(self.position)] == map.TileType.DOWNSTAIR:
+                    self.score += 100
+                    self.hp = max(self.max_hp // 2, self.hp)
+                    gs.delve_deeper()
+            elif event == ord(' '):
+                # wait
+                can_heal = True
+
+                for enemy in gs.enemies:
+                    if self.position.distance(enemy.position) < 7:
+                        can_heal = False
+
+                # if can_heal:
+                #     self.hp = min(self.hp + 1, self.max_hp)
+
+                return PlayerInputResult.Wait
         else:
             if event == ord('j') or event == curses.KEY_DOWN:
                 inc_index()
@@ -81,6 +110,7 @@ class Player:
                 dec_index()
             elif event == ord(' '):
                 if not self.inventory[get_idx()].use(self):
+                    self.score += 1
                     self.inventory.pop(get_idx())
                 return PlayerInputResult.UseItem
             elif event == ord('g'):
@@ -108,6 +138,7 @@ class Player:
             if enemy.damage(dmg):
                 log_message(f'{enemy.type} has been vanquished!')
                 gs.enemies.remove(enemy)
+                self.score += enemy.max_hp
                 return
         if noneEquipped:
             self.equipped = None

@@ -23,13 +23,15 @@ class Game:
         import_items()
         self.populate_rooms()
         self.is_dead = False
+        self.depth = 1
 
     def draw_map(self, stdscr):
         for x in range(map_tools.MAP_WIDTH):
             for y in range(map_tools.MAP_HEIGHT):
+                curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
                 match self.map[map_tools.xy_idx(x, y)]:
                     case map_tools.TileType.WALL:
-                        stdscr.addch(y, x, '#')
+                        stdscr.addch(y, x, '#', curses.color_pair(1))
                     case map_tools.TileType.FLOOR:
                         stdscr.addch(y, x, ' ')
                     case map_tools.TileType.DOWNSTAIR:
@@ -38,26 +40,31 @@ class Game:
     def draw_items(self, stdscr):
         for item in self.items:
             if isinstance(item, Weapon):
-                stdscr.addstr(item.position.y, item.position.x, 'w')
+                stdscr.addstr(item.position.y, item.position.x, '/')
             elif item.cocktail:
-                stdscr.addstr(item.position.y, item.position.x, 'c')
+                stdscr.addstr(item.position.y, item.position.x, 'u')
             else:
-                stdscr.addstr(item.position.y, item.position.x, 'f')
+                stdscr.addstr(item.position.y, item.position.x, 'o')
 
 
     def draw_npcs(self, stdscr):
+        curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
         for npc in self.npcs:
-            stdscr.addstr(npc.position.y, npc.position.x, 'n')
+            stdscr.addstr(npc.position.y, npc.position.x, '☺', curses.color_pair(2))
 
     def draw_enemies(self, stdscr):
+        curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
         for enemy in self.enemies:
-            stdscr.addstr(enemy.position.y, enemy.position.x, 'e')
+            stdscr.addstr(enemy.position.y, enemy.position.x, enemy.type.lower()[0], curses.color_pair(3))
 
     def draw_player(self, stdscr):
-        stdscr.addch(self.player.position.y, self.player.position.x, '@')
+        curses.init_pair(4, curses.COLOR_BLUE, curses.COLOR_BLACK)
+        stdscr.addch(self.player.position.y, self.player.position.x, '@', curses.color_pair(4))
 
     def draw_ui(self, stdscr):
         draw_box(stdscr, Rect(0, 30, 80, 6))
+
+        draw_label(stdscr, Point(1, 0), f' Depth: {self.depth} ')
 
         draw_label(stdscr, Point(2, 30), " " + self.player.name + " ")
 
@@ -113,6 +120,18 @@ class Game:
             npc.turn(self)
 
 leaderboard = False
+def delve_deeper(self):
+    self.room_list, self.map = map_tools.new_map_rooms_and_corridors(30, 6, 10)
+    self.player.position = Point(self.room_list[0].center()[0], self.room_list[0].center()[1])
+    self.items = []
+    self.enemies = []
+    self.npcs = []
+    import_items()
+    self.populate_rooms()
+    self.depth += 1
+    
+    log.clear_log()
+    log.log_message("You descend into the dungeon...")
 
 def game_loop(stdscr, gs):
     kk = 0
@@ -133,6 +152,8 @@ def game_loop(stdscr, gs):
 
 
     # Start colors in curses
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
     log.log_message("Welcome to the Dungeon of Curses!")
 
@@ -153,7 +174,7 @@ def game_loop(stdscr, gs):
                 cursor_x = mx
                 cursor_y = my
 
-                [log.log_message("You see " + enemy.type) for enemy in gs.enemies if enemy.position == Point(mx, my)]
+                [log.log_message("You see " + enemy.description) for enemy in gs.enemies if enemy.position == Point(mx, my)]
                 [log.log_message("You see " + npc.name) for npc in gs.npcs if npc.position == Point(mx, my)]
                 [log.log_message("You see a(n) " + item.name) for item in gs.items if item.position == Point(mx, my)]
             else:
@@ -192,8 +213,9 @@ def game_loop(stdscr, gs):
                 draw_label_centered(stdscr, (height // 2) - 3, ' | |__| | (☠| | | | | | |  __/ | |__| |\ V /  __/ |   ')
                 draw_label_centered(stdscr, (height // 2) - 2, '  \_____|\__,_|_| |_| |_|\___|  \____/  \_/ \___|_|   ')
                 draw_label_centered(stdscr, (height // 2) - 1, '                                                      ')
-                draw_label_centered(stdscr, (height // 2), 'Press l to view leaderboard.');
-                draw_label_centered(stdscr, (height // 2) + 1, '☠ Press Q to Quit ☠')
+                draw_label_centered(stdscr, (height // 2), f'☠ Score: {gs.player.score} ☠')
+                draw_label_centered(stdscr, (height // 2) + 1, 'Press l to view leaderboard.')
+                draw_label_centered(stdscr, (height // 2) + 2, '☠ Press Q to Quit ☠')
             else:
                 draw_label_centered(stdscr, 3, '  _      ______          _____  ______ _____  ____   ____          _____  _____  ')
                 draw_label_centered(stdscr, 4, ' | |    |  ____|   /\   |  __ \|  ____|  __ \|  _ \ / __ \   /\   |  __ \|  __ \ ')
