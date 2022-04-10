@@ -150,6 +150,8 @@ def game_loop(stdscr, gs):
             _, mx, my, _, _ = curses.getmouse()
             cursor_x = mx
             cursor_y = my
+        else:
+            gs.player.input(k, gs)
 
         cursor_x = max(0, cursor_x)
         cursor_x = min(width-1, cursor_x)
