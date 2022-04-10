@@ -41,7 +41,7 @@ def get_random_potion() -> Item:
     random.seed(drink['idDrink'])
     stat = random.randint(0, 2)
     if stat == 2:
-        amt = random.randint(1, 10)
+        amt = random.randint(1, 20)
         return HealthItem(drink['strDrink'], drink['strDrink'], f'In a glass is an intoxicating {drink["strDrink"]}.', amt, cocktail=True)
     amt = random.randint(1, 3)
     if random.randint(1, 10) == 1: amt *= -1
