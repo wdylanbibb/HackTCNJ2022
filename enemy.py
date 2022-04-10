@@ -1,4 +1,5 @@
 
+from cmath import log
 import random
 from items import Weapon
 from log import log_message
@@ -58,9 +59,9 @@ class Enemy:
                 if len(path) > 0:
                     self.position = Point(path[1 if len(path) > 1 else 0][0], path[1 if len(path) > 1 else 0][1])
 
-def get_random_enemy():
+def get_random_enemy(depth: int):
     choices = ['ogre', 'goblin', 'werewolf', 'insurance salesman', 'Tom Cruise', 'Your Mother', 'ball python', 'rose-bellied ferret']
     type = random.choice(choices)
-    hp = (len(choices) - choices.index(type)) * random.randint(5, 10)
+    hp = (len(choices) - choices.index(type)) * random.randint(5, 10) * (log(depth, 5) + 1).real
     weapon = get_random_weapon()
     return Enemy(type, hp, weapon)

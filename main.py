@@ -20,10 +20,10 @@ class Game:
         self.items = []
         self.enemies = []
         self.npcs = []
+        self.depth = 1
         import_items()
         self.populate_rooms()
         self.is_dead = False
-        self.depth = 1
         self.introduced = False
 
     def draw_map(self, stdscr):
@@ -111,7 +111,7 @@ class Game:
             if random.randint(1, 4) >= 2:
                 point = usedPoints[0]
 
-                self.enemies.append(get_random_enemy().set_position(point))
+                self.enemies.append(get_random_enemy(self.depth).set_position(point))
 
     def enemy_turn(self):
         for enemy in self.enemies:
@@ -153,7 +153,7 @@ def game_loop(stdscr, gs):
     curses.mousemask(1)
     # curses.echo(True)
 
-    
+
     player_name = ''
 
     # Start colors in curses
@@ -271,6 +271,7 @@ def game_loop(stdscr, gs):
 
             curses.init_pair(10, curses.COLOR_RED, curses.COLOR_BLACK)
             curses.init_pair(11, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+            draw_box(stdscr, Rect(0, 0, width - 1, height - 1))
             draw_label_centered(stdscr, (height // 2) - 10, "  (                                                                                       ", curses.color_pair(10))
             draw_label_centered(stdscr, (height // 2) - 9, "  )\ )                                              (        (                            ", curses.color_pair(10))
             draw_label_centered(stdscr, (height // 2) - 8, " (()/(     (          (  (     (                    )\ )     )\     (   (          (      ", curses.color_pair(10))
@@ -280,9 +281,9 @@ def game_loop(stdscr, gs):
             draw_label_centered(stdscr, (height // 2) - 4, "  | |) || || || ' \))/ _` | / -_)/ _ \| ' \)) / _ \ |  _|  | (__ | || || '_|(_-</ -_)(_-< ", curses.color_pair(11))
             draw_label_centered(stdscr, (height // 2) - 3, "  |___/  \_,_||_||_| \__, | \___|\___/|_||_|  \___/ |_|     \___| \_,_||_|  /__/\___|/__/ ", curses.color_pair(11))
             draw_label_centered(stdscr, (height // 2) - 2, "                     |___/                                                                ", curses.color_pair(11))
-            draw_label_centered(stdscr, (height // 2) - 1, 'Hello, traveller. What is your name?')
-            draw_label_centered(stdscr, (height // 2), player_name)
-            draw_box(stdscr, Rect(0, 0, width - 1, height - 1))
+            draw_label_centered(stdscr, (height // 2) - 2, 'Who knows what you will see next...', curses.color_pair(10))
+            draw_label_centered(stdscr, (height // 2),     'Hello, traveller. What is your name?')
+            draw_label_centered(stdscr, (height // 2) + 1, player_name)
         else:
             curses.curs_set(1)
             gs.draw(stdscr)

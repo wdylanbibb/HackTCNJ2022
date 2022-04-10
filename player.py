@@ -50,6 +50,11 @@ class Player:
                 pass
             case map.TileType.FLOOR | map.TileType.DOWNSTAIR:
                 self.position += new_position
+
+                items = [item for item in gs.items if item.position == self.position]
+                for item in items:
+                    log_message(f'You pass by {item.description}.')
+
                 return PlayerInputResult.Move
 
         return PlayerInputResult.Nothing
@@ -147,7 +152,7 @@ class Player:
             if enemy.damage(dmg, gs):
                 log_message(f'{the(enemy.type)}{enemy.type} has been vanquished!')
                 gs.enemies.remove(enemy)
-                self.score += enemy.max_hp
+                self.score += int(enemy.max_hp)
                 return
         if noneEquipped:
             self.equipped = None
