@@ -1,6 +1,5 @@
 import math
 from log import log_message
-from player import Player
 from utils import Point
 
 
@@ -14,17 +13,28 @@ class Item:
     def set_position(self, position: Point):
         self.position = position
         return self
+    
+    def get_name(self):
+        return self.name
 
-    def use(self, player: Player):
+    def use(self, player):
         return True
 
 class Weapon(Item):
     def __init__(self, name: str, description: str, detailedDesc: str, atk: int) -> None:
         super().__init__(name, description, detailedDesc)
         self.atk = atk
+    
+    def get_name(self):
+        return self.name
 
-    def use(self, player: Player):
-        log_message("You can't use this right now.")
+    def use(self, player):
+        if player.equipped == self:
+            player.unequip_weapon()
+            log_message(f'You unequipped the {self.name}.')
+        else:
+            player.equip_weapon(self)
+            log_message(f'You equipped the {self.name}.')
         return True
 
     def __str__(self) -> str:
@@ -36,7 +46,7 @@ class HealthItem(Item):
         self.healingAmt = healingAmt
         self.uses = uses
 
-    def use(self, player: Player):
+    def use(self, player):
         self.uses -= 1
         player.hp = min(player.max_hp, player.hp + self.healingAmt)
         log_message(f'You ate/drank the {self.name} and gained {self.healingAmt} health.')
@@ -44,6 +54,9 @@ class HealthItem(Item):
             log_message('You finished it! It is gone from your inventory.')
             return False
         return True
+
+    def get_name(self):
+        return f'{self.name} ({self.uses} uses left)'
 
     def __str__(self) -> str:
         return f'<HealthItem - Name: {self.name}, Description: {self.description}, Detailed Description: {self.detailedDesc}, Healing: {self.healingAmt}, Uses: {self.uses}>'
@@ -54,8 +67,11 @@ class BuffItem(Item):
         super().__init__(name, description, detailedDesc, cocktail=True)
         self.stat = stat
         self.buff = buff
+    
+    def get_name(self):
+        return self.name
 
-    def use(self, player: Player):
+    def use(self, player):
         player.stats[self.stat] += self.buff
         if self.buff > 0:
             log_message(f'You drank the {self.name} and suddenly gained {str(self.buff)} {" ".join([i.lower() for i in self.stat.split(r"[A-Z]")])}!')

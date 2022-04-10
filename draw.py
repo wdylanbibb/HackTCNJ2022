@@ -47,7 +47,7 @@ def dec_index():
 def get_idx():
     return invIndex
 
-def draw_inventory(stdscr, inventory):
+def draw_inventory(stdscr, inventory, equipped):
     global showInventory, invIndex, invStartIdx, lastIndex
 
     if showInventory:
@@ -68,7 +68,9 @@ def draw_inventory(stdscr, inventory):
         if invStartIdx > 0:
             draw_label(stdscr, Point(40, 13), '☝')
         for idx, item in enumerate(inventory[invStartIdx:invStartIdx + 6]):
-            draw_label(stdscr, Point(18, 14 + idx * 2), ('> ' if idx + invStartIdx == invIndex else '') + item.name)
+            if item == equipped:
+                draw_label(stdscr, Point(16, 14 + idx * 2), '*')
+            draw_label(stdscr, Point(18, 14 + idx * 2), ('> ' if idx + invStartIdx == invIndex else '') + item.get_name())
         if len(inventory) - 1 > invStartIdx + 5:
             draw_label(stdscr, Point(40, 27), '☟')
         if invIndex >= 0 and lastIndex != invIndex:

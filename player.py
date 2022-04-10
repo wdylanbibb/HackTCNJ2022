@@ -1,10 +1,10 @@
 from hashlib import new
 from draw import dec_index, get_idx, inc_index, is_show_inventory, toggle_inventory
+from items import Weapon
 from log import log_message
 import map
 from utils import Point
 import curses
-import log
 from enum import Enum
 
 class PlayerInputResult(Enum):
@@ -24,6 +24,7 @@ class Player:
         self.stats = { 'strength': strength, 'attackSpeed': attackSpeed }
         self.position = position
         self.inventory = []
+        self.equipped = None
 
     def attempt_movement(self, gs, new_position: Point):
         npcs = [i for i in gs.npcs if i.position == self.position + new_position]
@@ -62,6 +63,9 @@ class Player:
                     gs.items.remove(item)
                     self.inventory.append(item)
                     log_message(f'You pick up the {item.name}.')
+                    if self.equipped is None and isinstance(item, Weapon):
+                        self.equip_weapon(item)
+                        log_message(f'You equipped the {item.name}.')
                 if len(items) > 0:
                     return PlayerInputResult.PickUp
                 else:
@@ -82,10 +86,8 @@ class Player:
 
         return PlayerInputResult.Nothing
 
+    def equip_weapon(self, weapon):
+        self.equipped = weapon
 
-        items = [i for i in gs.items if i.position == self.position]
-
-        for item in items:
-            item.position = None
-            gs.items.remove(item)
-            self.inventory.append(item)
+    def unequip_weapon(self):
+        self.equipped = None
