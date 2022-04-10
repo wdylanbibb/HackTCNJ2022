@@ -3,12 +3,15 @@ import random
 from items import Weapon
 from log import log_message
 from map import TileType, get_2d_map, get_path_to, p_idx, xy_idx
-from utils import Point
+from utils import Point, a
 from yamlReader import get_random_weapon
 
 class Enemy:
     def __init__(self, enemyType: str, hp: int, weapon: Weapon) -> None:
         self.type = enemyType
+        self.description = a(self.type) + " " + self.type
+        if self.type[0].isupper():
+            self.description = self.type
         self.hp = hp
         self.max_hp = hp
         self.weapon = weapon
@@ -49,10 +52,11 @@ class Enemy:
 
                 path = get_path_to(blocked_map, self.position, gs.player.position)
 
-                self.position = Point(path[1 if len(path) > 1 else 0][0], path[1 if len(path) > 1 else 0][1])
+                if len(path) > 0:
+                    self.position = Point(path[1 if len(path) > 1 else 0][0], path[1 if len(path) > 1 else 0][1])
 
 def get_random_enemy():
-    choices = ['an ogre', 'a goblin', 'a werewolf', 'an insurance salesman', 'Tom Cruise', 'your mother', 'a ball python', 'Yellow-bellied ferret']
+    choices = ['ogre', 'goblin', 'werewolf', 'insurance salesman', 'Tom Cruise', 'Your Mother', 'ball python', 'rose-bellied ferret']
     type = random.choice(choices)
     hp = (len(choices) - choices.index(type)) * random.randint(5, 10)
     weapon = get_random_weapon()

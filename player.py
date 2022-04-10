@@ -60,6 +60,14 @@ class Player:
                 return self.attempt_movement(gs, Point(0, -1))
             elif event == ord('l') or event == curses.KEY_RIGHT:
                 return self.attempt_movement(gs, Point(1, 0))
+            elif event == ord('y'):
+                return self.attempt_movement(gs, Point(-1, -1))
+            elif event == ord('u'):
+                return self.attempt_movement(gs, Point(1, -1))
+            elif event == ord('b'):
+                return self.attempt_movement(gs, Point(-1, 1))
+            elif event == ord('n'):
+                return self.attempt_movement(gs, Point(1, 1))
 
             elif event == ord('g'):
                 items = [item for item in gs.items if item.position == self.position]
@@ -79,6 +87,7 @@ class Player:
             elif event == ord('.'):
                 if gs.map[map.p_idx(self.position)] == map.TileType.DOWNSTAIR:
                     self.score += 100
+                    self.hp = max(self.max_hp // 2, self.hp)
                     gs.delve_deeper()
             elif event == ord(' '):
                 # wait
@@ -88,8 +97,8 @@ class Player:
                     if self.position.distance(enemy.position) < 7:
                         can_heal = False
 
-                if can_heal:
-                    self.hp = min(self.hp + 1, self.max_hp)
+                # if can_heal:
+                #     self.hp = min(self.hp + 1, self.max_hp)
 
                 return PlayerInputResult.Wait
         else:

@@ -52,3 +52,12 @@ class Point:
 
     def distance(self, other: Point) -> float:
         return math.sqrt((other.x - self.x) ** 2 + (other.y - self.y) ** 2)
+
+# Returns an if string parameter n starts with a vowel, a otherwise (i think it's name is pretty funny)
+def a(n) -> str:
+    if len(n) < 1:
+        return ""
+    elif n[0].lower() in ['a', 'e', 'i', 'o', 'u']:
+        return "an"
+    else:
+        return "a"

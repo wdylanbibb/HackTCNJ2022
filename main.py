@@ -28,9 +28,10 @@ class Game:
     def draw_map(self, stdscr):
         for x in range(map_tools.MAP_WIDTH):
             for y in range(map_tools.MAP_HEIGHT):
+                curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
                 match self.map[map_tools.xy_idx(x, y)]:
                     case map_tools.TileType.WALL:
-                        stdscr.addch(y, x, '#')
+                        stdscr.addch(y, x, '#', curses.color_pair(1))
                     case map_tools.TileType.FLOOR:
                         stdscr.addch(y, x, ' ')
                     case map_tools.TileType.DOWNSTAIR:
@@ -39,23 +40,26 @@ class Game:
     def draw_items(self, stdscr):
         for item in self.items:
             if isinstance(item, Weapon):
-                stdscr.addstr(item.position.y, item.position.x, 'w')
+                stdscr.addstr(item.position.y, item.position.x, '/')
             elif item.cocktail:
-                stdscr.addstr(item.position.y, item.position.x, 'c')
+                stdscr.addstr(item.position.y, item.position.x, 'u')
             else:
-                stdscr.addstr(item.position.y, item.position.x, 'f')
+                stdscr.addstr(item.position.y, item.position.x, 'o')
 
 
     def draw_npcs(self, stdscr):
+        curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
         for npc in self.npcs:
-            stdscr.addstr(npc.position.y, npc.position.x, 'n')
+            stdscr.addstr(npc.position.y, npc.position.x, '☺', curses.color_pair(2))
 
     def draw_enemies(self, stdscr):
+        curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
         for enemy in self.enemies:
-            stdscr.addstr(enemy.position.y, enemy.position.x, 'e')
+            stdscr.addstr(enemy.position.y, enemy.position.x, enemy.type.lower()[0], curses.color_pair(3))
 
     def draw_player(self, stdscr):
-        stdscr.addch(self.player.position.y, self.player.position.x, '@')
+        curses.init_pair(4, curses.COLOR_BLUE, curses.COLOR_BLACK)
+        stdscr.addch(self.player.position.y, self.player.position.x, '@', curses.color_pair(4))
 
     def draw_ui(self, stdscr):
         draw_box(stdscr, Rect(0, 30, 80, 6))
@@ -147,6 +151,8 @@ def game_loop(stdscr, gs):
 
 
     # Start colors in curses
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
     log.log_message("Welcome to the Dungeon of Curses!")
 
@@ -167,7 +173,7 @@ def game_loop(stdscr, gs):
                 cursor_x = mx
                 cursor_y = my
 
-                [log.log_message("You see " + enemy.type) for enemy in gs.enemies if enemy.position == Point(mx, my)]
+                [log.log_message("You see " + enemy.description) for enemy in gs.enemies if enemy.position == Point(mx, my)]
                 [log.log_message("You see " + npc.name) for npc in gs.npcs if npc.position == Point(mx, my)]
                 [log.log_message("You see a(n) " + item.name) for item in gs.items if item.position == Point(mx, my)]
             else:
@@ -204,7 +210,8 @@ def game_loop(stdscr, gs):
             draw_label_centered(stdscr, (height // 2) - 3, ' | |__| | (☠| | | | | | |  __/ | |__| |\ V /  __/ |   ')
             draw_label_centered(stdscr, (height // 2) - 2, '  \_____|\__,_|_| |_| |_|\___|  \____/  \_/ \___|_|   ')
             draw_label_centered(stdscr, (height // 2) - 1, '                                                      ')
-            draw_label_centered(stdscr, (height // 2), '☠ Press Q to Quit ☠')
+            draw_label_centered(stdscr, (height // 2), f'☠ Score: {gs.player.score} ☠')
+            draw_label_centered(stdscr, (height // 2) + 1, '☠ Press Q to Quit ☠')
         else:
             gs.draw(stdscr)
 
