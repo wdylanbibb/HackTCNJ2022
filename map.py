@@ -74,15 +74,3 @@ def new_map_rooms_and_corridors(max_rooms: int, min_size: int, max_size: int, ma
             rooms.append(new_room)
 
     return (rooms, map)
-
-def draw_map(map: Map):
-    for x in range(MAP_WIDTH):
-        for y in range(MAP_HEIGHT):
-            match map[xy_idx(x, y)]:
-                case TileType.WALL:
-                    print('#', end='')
-                case TileType.FLOOR:
-                    print('.', end='')
-                case _:
-                    print('!', end='')
-        print()

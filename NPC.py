@@ -26,11 +26,12 @@ class NPC:
         return f'<Person - Name: {self.name}>'
 
     def talk(self):
-        log_message(f'{self.name} says hello.')
+        log_message(f'{self.name}: "{self.next_message()}"')
 
     def turn(self, gs):
-        if gs.player.position.distance(self.position) < 7:
-            log_message(f'{self.name} stands around.')
+        pass
+        # if gs.player.position.distance(self.position) < 7:
+        #     log_message(f'{self.name} stands around.')
 
     def next_message(self):
         if self.numVisited == 0:
