@@ -37,7 +37,7 @@ class Player:
             return PlayerInputResult.Talk
         for enemy in enemies:
             # attack
-            enemy.attack()
+            self.attack(enemy)
             return PlayerInputResult.Attack
 
         if gs.map[map.p_idx(self.position + new_position)] == map.TileType.FLOOR:
