@@ -1,7 +1,7 @@
 weapons:
   Revolver:
     description: an old battered revolver
-    detailedDescription: On closer inspection, the firearm must be at least 100 years old, but there is nothing else notable about it.
+    detailedDescription: On closer inspection, the firearm must be at least 100 years old, but there is nothing else notable about it, except that it has no bullets...
     damage: 5
 
   Katana:

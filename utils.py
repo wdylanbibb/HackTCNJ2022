@@ -42,3 +42,6 @@ class Point:
         x = self.x - other.x
         y = self.y - other.y
         return Point(x, y)
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
