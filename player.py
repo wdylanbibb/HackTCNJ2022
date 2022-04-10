@@ -31,7 +31,11 @@ class Player:
 
         for npc in npcs:
             # dialog
+<<<<<<< HEAD
             npc.talk()
+=======
+            log_message(f'> {npc.name} - "{npc.next_message()}"')
+>>>>>>> 54e3c7905d6be008a05b6715e81433cd973af61e
             return PlayerInputResult.Talk
         for enemy in enemies:
             # attack
