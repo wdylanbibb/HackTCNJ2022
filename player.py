@@ -75,6 +75,7 @@ class Player:
             elif event == curses.KEY_SPACE:
                 if not self.inventory[get_idx()].use(self):
                     self.inventory.pop(get_idx())
+                return PlayerInputResult.UseItem
 
         if event == ord('i'):
             toggle_inventory()
