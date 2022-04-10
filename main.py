@@ -45,7 +45,7 @@ class Game:
             elif item.cocktail:
                 stdscr.addstr(item.position.y, item.position.x, 'u')
             else:
-                stdscr.addstr(item.position.y, item.position.x, 'o')
+                stdscr.addstr(item.position.y, item.position.x, '%')
 
 
     def draw_npcs(self, stdscr):
@@ -269,9 +269,20 @@ def game_loop(stdscr, gs):
                     gs.introduced = True
                     gs.player.name = player_name
 
-            draw_box(stdscr, Rect(0, 0, width - 1, height - 1))
+            curses.init_pair(10, curses.COLOR_RED, curses.COLOR_BLACK)
+            curses.init_pair(11, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+            draw_label_centered(stdscr, (height // 2) - 10, "  (                                                                                       ", curses.color_pair(10))
+            draw_label_centered(stdscr, (height // 2) - 9, "  )\ )                                              (        (                            ", curses.color_pair(10))
+            draw_label_centered(stdscr, (height // 2) - 8, " (()/(     (          (  (     (                    )\ )     )\     (   (          (      ", curses.color_pair(10))
+            draw_label_centered(stdscr, (height // 2) - 7, "  /(_))   ))\   (     )\))(   ))\  (    (       (  (()/(   (((_)   ))\  )(   (    ))\ (   ", curses.color_pair(10))
+            draw_label_centered(stdscr, (height // 2) - 6, " (_))_   /((_)  )\ ) ((_))\  /((_) )\   )\ )    )\  /(_))  )\___  /((_)(()\  )\  /((_))\  ", curses.color_pair(10))
+            draw_label_centered(stdscr, (height // 2) - 5, "  |   \ (_))(  _(_/(  (()(_)(_))  ((_) _(_/(   ((_)(_) _| ((/ __|(_))(  ((_)((_)(_)) ((_) ", curses.color_pair(10))
+            draw_label_centered(stdscr, (height // 2) - 4, "  | |) || || || ' \))/ _` | / -_)/ _ \| ' \)) / _ \ |  _|  | (__ | || || '_|(_-</ -_)(_-< ", curses.color_pair(11))
+            draw_label_centered(stdscr, (height // 2) - 3, "  |___/  \_,_||_||_| \__, | \___|\___/|_||_|  \___/ |_|     \___| \_,_||_|  /__/\___|/__/ ", curses.color_pair(11))
+            draw_label_centered(stdscr, (height // 2) - 2, "                     |___/                                                                ", curses.color_pair(11))
             draw_label_centered(stdscr, (height // 2) - 1, 'Hello, traveller. What is your name?')
             draw_label_centered(stdscr, (height // 2), player_name)
+            draw_box(stdscr, Rect(0, 0, width - 1, height - 1))
         else:
             curses.curs_set(1)
             gs.draw(stdscr)
