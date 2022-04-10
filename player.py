@@ -147,7 +147,7 @@ class Player:
         self.hp -= amt
         if self.hp <= 0:
             log_message(f'You were defeated by {enemy.type}. Game over.')
-            requests.post('https://dungeon-of-curses.herokuapp.com/highscores', json={'user': self.name})
+            requests.post('https://dungeon-of-curses.herokuapp.com/highscores', json={'user': self.name, 'score': self.score})
 
     def equip_weapon(self, weapon):
         self.equipped = weapon
