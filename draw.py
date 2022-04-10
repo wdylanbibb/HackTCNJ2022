@@ -95,6 +95,8 @@ def draw_inventory(stdscr, inventory, equipped):
             draw_label(stdscr, Point(40, 13), '☝')
         offset = 0
         for idx, item in enumerate(inventory[invStartIdx:invStartIdx + 6]):
+            global firstLine
+            firstLine = True
             if item == equipped:
                 draw_label(stdscr, Point(16, 14 + (idx + offset) * 2), '*')
             words = re.split(r"\s+", item.get_name())
@@ -104,9 +106,11 @@ def draw_inventory(stdscr, inventory, equipped):
                 if len(word) + 1 + len(msg) < 30:
                     msg += word + ' '
                 else:
-                    draw_label(stdscr, Point(18, 14 + (idx + offset) * 2), ('> ' if idx + invStartIdx == invIndex else '') + msg)
+                    draw_label(stdscr, Point(18, 14 + (idx + offset) * 2), ('> ' if idx + invStartIdx == invIndex and firstLine else '') + msg)
                     offset += 1
                     msg = word + ' '
+                    global firstLine
+                    firstLine = False
             draw_label(stdscr, Point(18, 14 + (idx + offset) * 2), ('> ' if idx + invStartIdx == invIndex else '') + msg)
         if len(inventory) - 1 > invStartIdx + 5:
             draw_label(stdscr, Point(40, 27), '☟')

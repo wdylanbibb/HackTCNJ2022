@@ -48,3 +48,38 @@ weapons:
     description: a typical sludgehammer
     detailedDescription: Wait, did you read that right? It's sopping wet.
     damage: 6
+
+  Beam Sword:
+    description: a sparking beam sword
+    detailedDescription: No, this isn't Star Wars. It's just a beam sword, that other name's copyrighted.
+    damage: 6
+
+  Elephant Tusk:
+    desciption: a shiny white elephant tusk
+    detailedDescription: This would probably do some pretty good damage. Is this why poachers are so profitable?
+    damage: 4
+
+  Didgeridoo:
+    desciption: an authentic Australian aboriginal didgeridoo
+    detailedDescription: How do you even carry that around? It's taller than you!
+    damage: 3
+
+  Molotov Cocktail:
+    desciption: a bottle with a fuel-soaked rag
+    detailedDescription: A very different kind of cocktail, but... it'll do, I suppose.
+    damage: 5
+
+  Balloon:
+    description: an innocent red balloon
+    detailedDescription: Who knew balloons were so effective as weapons? It doesn't make sense!
+    damage: 3
+
+  Air Horn:
+    desciption: an everyday air horn
+    detailedDescription: Aural warfare!
+    damage: 4
+  
+  Brick:
+    description: a brick
+    detailedDescription: It's very hard, but it's still a brick.
+    damage: 8
