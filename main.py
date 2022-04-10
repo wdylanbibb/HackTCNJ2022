@@ -47,20 +47,20 @@ class Game:
     def draw_items(self, stdscr):
         for item in self.items:
             if isinstance(item, Weapon):
-                stdscr.addch(item.position.y, item.position.x, '?')
+                stdscr.addstr(item.position.y, item.position.x, 'w')
             elif item.cocktail:
-                stdscr.addch(item.position.y, item.position.x, '\U0001f378')
+                stdscr.addstr(item.position.y, item.position.x, 'c')
             else:
-                stdscr.addch(item.position.y, item.position.x, '\u1F33D')
+                stdscr.addstr(item.position.y, item.position.x, 'f')
 
             
     def draw_npcs(self, stdscr):
-        for item in self.items:
-            stdscr.addch(item.position.y, item.position.x, '?')
+        for npc in self.npcs:
+            stdscr.addstr(npc.position.y, npc.position.x, 'n')
 
     def draw_enemies(self, stdscr):
-        for item in self.items:
-            stdscr.addch(item.position.y, item.position.x, '?')
+        for enemy in self.enemies:
+            stdscr.addstr(enemy.position.y, enemy.position.x, 'e')
 
     def draw_player(self, stdscr):
         stdscr.addch(self.player.position.y, self.player.position.x, '@')
@@ -77,15 +77,18 @@ class Game:
         self.draw_map(stdscr)
         self.draw_player(stdscr)
         self.draw_ui(stdscr)
+        self.draw_enemies(stdscr)
+        self.draw_items(stdscr)
+        self.draw_npcs(stdscr)
 
     def populate_rooms(self):
         for room in self.room_list:
             itemNum = random.randint(0, room.width // 5)
             usedPoints: list[Point] = [Point(room.x + (room.width // 2), room.y + (room.height // 2))]
             for i in range(itemNum):
-                point = Point(room.x + random.randint(0, room.width - 1), room.y + random.randint(0, room.height - 1))
+                point = Point(room.x + 1 + random.randint(0, room.width - 2), room.y + 1 + random.randint(0, room.height - 2))
                 while point in usedPoints:
-                    point = Point(room.x + random.randint(0, room.width - 1), room.y + random.randint(0, room.height - 1))
+                    point = Point(room.x + 1 + random.randint(0, room.width - 2), room.y + 1 + random.randint(0, room.height - 2))
                 usedPoints.append(point)
                 match random.randint(0, 2):
                     case 0:
@@ -96,9 +99,9 @@ class Game:
                         item = get_random_potion().set_position(point)
                 self.items.append(item)
             if random.randint(1, 20) == 1:
-                point = Point(room.x + random.randint(0, room.width - 1), room.y + random.randint(0, room.height - 1))
+                point = Point(room.x + 1 + random.randint(0, room.width - 2), room.y + 1 + random.randint(0, room.height - 2))
                 while point in usedPoints:
-                    point = Point(room.x + random.randint(0, room.width - 1), room.y + random.randint(0, room.height - 1))
+                    point = Point(room.x + 1 + random.randint(0, room.width - 2), room.y + 1 + random.randint(0, room.height - 2))
                 usedPoints.append(point)
                 self.npcs.append(get_random_NPC().set_position(point))
 
