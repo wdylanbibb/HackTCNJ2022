@@ -96,6 +96,15 @@ class Player:
 
         return PlayerInputResult.Nothing
 
+    def attack(self, enemy):
+        noneEquipped = self.equipped is None
+        if noneEquipped:
+            self.equipped = Weapon('your fists', 'your fists', 'Just your fists.', 2)
+        for atk in range(self.stats['attackSpeed']):
+            enemy.deal_damage(self.equipped.atk * (abs(self.stats['strength'] - 1) * .9 + 1))
+        if noneEquipped:
+            self.equipped = None
+
     def equip_weapon(self, weapon):
         self.equipped = weapon
 
