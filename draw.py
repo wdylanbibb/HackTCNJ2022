@@ -1,5 +1,9 @@
 from log import log_message
 from utils import Point, Rect
+from enum import Enum
+
+
+
 
 
 def draw_box(stdscr, rect: Rect):
@@ -22,12 +26,13 @@ invIndex = 0
 invStartIdx = 0
 lastIndex = -1
 
-def toggle_inventory():
+def toggle_inventory() -> bool:
     global showInventory, invIndex, invStartIdx
     showInventory = not showInventory
     invIndex = 0
     invStartIdx = 0
     lastIndex = -1
+    return showInventory
 
 def is_show_inventory():
     return showInventory
@@ -62,11 +67,11 @@ def draw_inventory(stdscr, inventory):
         draw_label(stdscr, Point(36, 10), 'INVENTORY')
         draw_label(stdscr, Point(34, 11), '─' * 13)
         if invStartIdx > 0:
-            draw_label(stdscr, Point(40, 13), '^')
+            draw_label(stdscr, Point(40, 13), '☝')
         for idx, item in enumerate(inventory[invStartIdx:invStartIdx + 6]):
             draw_label(stdscr, Point(18, 14 + idx * 2), ('> ' if idx + invStartIdx == invIndex else '') + item.name)
         if len(inventory) - 1 > invStartIdx + 5:
-            draw_label(stdscr, Point(40, 27), 'v')
+            draw_label(stdscr, Point(40, 27), '☟')
         if invIndex >= 0 and lastIndex != invIndex:
             log_message(inventory[invIndex].detailedDesc)
         lastIndex = invIndex
