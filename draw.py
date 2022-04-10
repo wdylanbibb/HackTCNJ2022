@@ -9,14 +9,17 @@ def draw_box(stdscr, rect: Rect):
         stdscr.addstr(rect.y + y, rect.x, "│" + (" " * (rect.width - 2)) + "│")
     stdscr.addstr(rect.y + rect.height, rect.x, "└" + ("─" * (rect.width - 2)) + "┘")
 
-def draw_label(stdscr, pos: Point, msg: str):
+def draw_label(stdscr, pos: Point, msg: str, color_pair = 0):
     _, width = stdscr.getmaxyx()
 
-    stdscr.addstr(pos.y, max(pos.x, 0), msg[abs(min(pos.x, 0)):width])
+    if color_pair == 0:
+        stdscr.addstr(pos.y, max(pos.x, 0), msg[abs(min(pos.x, 0)):width])
+    else:
+        stdscr.addstr(pos.y, max(pos.x, 0), msg[abs(min(pos.x, 0)):width], color_pair)
 
-def draw_label_centered(stdscr, y: int, msg: str):
+def draw_label_centered(stdscr, y: int, msg: str, color_pair = 0):
     _, width = stdscr.getmaxyx()
-    draw_label(stdscr, Point((width // 2) - (len(msg) // 2), y), msg)
+    draw_label(stdscr, Point((width // 2) - (len(msg) // 2), y), msg, color_pair)
 
 showInventory = False
 invIndex = 0

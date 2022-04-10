@@ -24,6 +24,7 @@ class Game:
         self.populate_rooms()
         self.is_dead = False
         self.depth = 1
+        self.introduced = False
 
     def draw_map(self, stdscr):
         for x in range(map_tools.MAP_WIDTH):
@@ -120,28 +121,28 @@ class Game:
         for npc in self.npcs:
             npc.turn(self)
 
+    def delve_deeper(self):
+        self.room_list, self.map = map_tools.new_map_rooms_and_corridors(30, 6, 10)
+        self.player.position = Point(self.room_list[0].center()[0], self.room_list[0].center()[1])
+        self.items = []
+        self.enemies = []
+        self.npcs = []
+        import_items()
+        self.populate_rooms()
+        self.depth += 1
+
+        log.clear_log()
+        log.log_message("You descend into the dungeon...")
 leaderboard = False
-def delve_deeper(self):
-    self.room_list, self.map = map_tools.new_map_rooms_and_corridors(30, 6, 10)
-    self.player.position = Point(self.room_list[0].center()[0], self.room_list[0].center()[1])
-    self.items = []
-    self.enemies = []
-    self.npcs = []
-    import_items()
-    self.populate_rooms()
-    self.depth += 1
-    
-    log.clear_log()
-    log.log_message("You descend into the dungeon...")
 
 def game_loop(stdscr, gs):
-    kk = 0
+    kk = ''
+    kw = 0
     k = 0
     height, width = stdscr.getmaxyx()
     cursor_x = 0
     cursor_y = 0
 
-    curses.curs_set(1)
     stdscr.nodelay(True)
 
     # Clear and refresh the screen for a blank canvas
@@ -150,7 +151,10 @@ def game_loop(stdscr, gs):
     stdscr.refresh()
 
     curses.mousemask(1)
+    # curses.echo(True)
 
+    
+    player_name = ''
 
     # Start colors in curses
     curses.start_color()
@@ -159,7 +163,7 @@ def game_loop(stdscr, gs):
     log.log_message("Welcome to the Dungeon of Curses!")
 
     # Loop where k is the last character pressed
-    while (k != ord('q')):
+    while not (gs.introduced and k == ord('q')):
         # Initialization
         if k == curses.KEY_RESIZE:
             curses.resize_term(0, 0)
@@ -179,17 +183,25 @@ def game_loop(stdscr, gs):
                 [log.log_message("You see " + npc.name) for npc in gs.npcs if npc.position == Point(mx, my)]
                 [log.log_message("You see a(n) " + item.name) for item in gs.items if item.position == Point(mx, my)]
             else:
-                match gs.player.input(k, gs):
-                    case PlayerInputResult.Move | PlayerInputResult.Attack | PlayerInputResult.Talk | PlayerInputResult.UseItem | PlayerInputResult.PickUp | PlayerInputResult.Wait | PlayerInputResult.DropItem:
-                        # Enemy Move
-                        gs.npc_turn()
-                        gs.enemy_turn()
+                if gs.introduced:
+                    match gs.player.input(k, gs):
+                        case PlayerInputResult.Move | PlayerInputResult.Attack | PlayerInputResult.Talk | PlayerInputResult.UseItem | PlayerInputResult.PickUp | PlayerInputResult.Wait | PlayerInputResult.DropItem:
+                            # Enemy Move
+                            gs.npc_turn()
+                            gs.enemy_turn()
 
-                        if gs.player.hp <= 0:
-                            gs.is_dead = True
-                    case PlayerInputResult.Nothing:
-                        # Nothing
-                        pass
+                            if gs.player.hp <= 0:
+                                gs.is_dead = True
+                        case PlayerInputResult.Nothing:
+                            # Nothing
+                            pass
+                # else:
+                #     if kk == 0:
+                #         player_name = ' '
+                #     else:
+                #         player_name = str(kk)
+
+
 
         cursor_x = max(0, cursor_x)
         cursor_x = min(width-1, cursor_x)
@@ -200,12 +212,14 @@ def game_loop(stdscr, gs):
 
 
         if height <= 37 - 1 or width <= 80 - 1:
+            curses.curs_set(0)
             draw_label_centered(stdscr, (height // 2) - 1, 'Your screen is too small!')
             draw_label_centered(stdscr, (height // 2), 'Required: 80x37')
             draw_label_centered(stdscr, (height // 2) + 1, f'Current Size: {width}x{height}')
         elif gs.is_dead:
             curses.curs_set(0)
             draw_box(stdscr, Rect(0, 0, width - 1, height - 1))
+
             if not leaderboard:
                 draw_label_centered(stdscr, (height // 2) - 7, '   _____                         ____                 ')
                 draw_label_centered(stdscr, (height // 2) - 6, '  / ____|                       / __ \                ')
@@ -218,21 +232,48 @@ def game_loop(stdscr, gs):
                 draw_label_centered(stdscr, (height // 2) + 1, 'Press l to view leaderboard.')
                 draw_label_centered(stdscr, (height // 2) + 2, '☠ Press Q to Quit ☠')
             else:
-                draw_label_centered(stdscr, 3, '  _      ______          _____  ______ _____  ____   ____          _____  _____  ')
-                draw_label_centered(stdscr, 4, ' | |    |  ____|   /\   |  __ \|  ____|  __ \|  _ \ / __ \   /\   |  __ \|  __ \ ')
-                draw_label_centered(stdscr, 5, ' | |    | |__     /  \  | |  | | |__  | |__) | |_) | |  | | /  \  | |__) | |  | |')
-                draw_label_centered(stdscr, 6, ' | |    |  __|   / /\ \ | |  | |  __| |  _  /|  _ <| |  | |/ /\ \ |  _  /| |  | |')
-                draw_label_centered(stdscr, 7, ' | |____| |____ / ____ \| |__| | |____| | \ \| |_) | |__| / ____ \| | \ \| |__| |')
-                draw_label_centered(stdscr, 8, ' |______|______/_/    \_\_____/|______|_|  \_\____/ \____/_/    \_\_|  \_\_____/ ')
-                draw_label_centered(stdscr, 9, '─────────────────────────────────────────────────────────────────────────────────')
+                curses.init_pair(6, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+                curses.init_pair(7, curses.COLOR_RED, curses.COLOR_BLACK)
+                curses.init_pair(8, curses.COLOR_GREEN, curses.COLOR_BLACK)
+                curses.init_pair(9, curses.COLOR_BLUE, curses.COLOR_BLACK)
+                draw_label_centered(stdscr, 3, '  _      ______          _____  ______ _____  ____   ____          _____  _____  ', curses.color_pair(6))
+                draw_label_centered(stdscr, 4, ' | |    |  ____|   /\   |  __ \|  ____|  __ \|  _ \ / __ \   /\   |  __ \|  __ \ ', curses.color_pair(6))
+                draw_label_centered(stdscr, 5, ' | |    | |__     /  \  | |  | | |__  | |__) | |_) | |  | | /  \  | |__) | |  | |', curses.color_pair(6))
+                draw_label_centered(stdscr, 6, ' | |    |  __|   / /\ \ | |  | |  __| |  _  /|  _ <| |  | |/ /\ \ |  _  /| |  | |', curses.color_pair(6))
+                draw_label_centered(stdscr, 7, ' | |____| |____ / ____ \| |__| | |____| | \ \| |_) | |__| / ____ \| | \ \| |__| |', curses.color_pair(6))
+                draw_label_centered(stdscr, 8, ' |______|______/_/    \_\_____/|______|_|  \_\____/ \____/_/    \_\_|  \_\_____/ ', curses.color_pair(6))
+                draw_label_centered(stdscr, 9, '─────────────────────────────────────────────────────────────────────────────────', curses.color_pair(6))
                 highscores = requests.get('https://dungeon-of-curses.herokuapp.com/highscores').json()
                 for i, score in enumerate(highscores):
-                    draw_label_centered(stdscr, i + 11, f'{score["user"]}: {score["score"]} points')
+                    if i == 0:
+                        draw_label_centered(stdscr, i + 11, f'{score["user"]}: {score["score"]} points', curses.color_pair(7))
+                    elif i == 1:
+                        draw_label_centered(stdscr, i + 11, f'{score["user"]}: {score["score"]} points', curses.color_pair(8))
+                    elif i == 2:
+                        draw_label_centered(stdscr, i + 11, f'{score["user"]}: {score["score"]} points', curses.color_pair(9))
+                    else:
+                        draw_label_centered(stdscr, i + 11, f'{score["user"]}: {score["score"]} points')
                 draw_label_centered(stdscr, 20, 'Press l to stop viewing leaderboard.');
                 draw_label_centered(stdscr, 21, '☠ Press Q to Quit ☠')
             if (k == ord('l')):
                 leaderboard = not leaderboard
+        elif not gs.introduced:
+            curses.curs_set(0)
+
+            if 32 <= k <= 126:
+                player_name += chr(k) if k in range(0x110000) else ''
+            else:
+                if k == 127:
+                    player_name = player_name[:-1]
+                elif k == ord('\n'):
+                    gs.introduced = True
+                    gs.player.name = player_name
+
+            draw_box(stdscr, Rect(0, 0, width - 1, height - 1))
+            draw_label_centered(stdscr, (height // 2) - 1, 'Hello, traveller. What is your name?')
+            draw_label_centered(stdscr, (height // 2), player_name)
         else:
+            curses.curs_set(1)
             gs.draw(stdscr)
 
         stdscr.move(cursor_y, cursor_x)
@@ -242,8 +283,6 @@ def game_loop(stdscr, gs):
 
         # Wait for next input
         k = stdscr.getch()
-
-        # kk = stdscr.getkey()
 
         stdscr.refresh()
 
@@ -255,3 +294,26 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# def draw_menu(stdscr):
+#     stdscr.addstr(0, 0, "Enter IM message: (hit Ctrl-G to send)")
+
+#     editwin = curses.newwin(5,30, 2,1)
+#     rectangle(stdscr, 1,0, 1+5+1, 1+30+1)
+#     stdscr.refresh()
+
+#     box = Textbox(editwin)
+
+#     # Let the user edit until Ctrl-G is struck.
+#     box.edit()
+
+#     # Get resulting contents
+#     message = box.gather()
+
+#     print(message)
+
+# def main():
+#     curses.wrapper(draw_menu)
+
+# if __name__ == "__main__":
+#     main()

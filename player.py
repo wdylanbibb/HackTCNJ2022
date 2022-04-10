@@ -5,7 +5,7 @@ from draw import dec_index, dec_legend_index, get_idx, inc_index, inc_legend_ind
 from items import Item, Weapon
 from log import log_message
 import map
-from utils import Point
+from utils import Point, the, a
 import curses
 from enum import Enum
 
@@ -36,7 +36,9 @@ class Player:
 
         for npc in npcs:
             # dialog
-            npc.talk()
+            initial_dialog = npc.talk()
+            if initial_dialog:
+                self.score += 20
             return PlayerInputResult.Talk
         for enemy in enemies:
             # attack
@@ -142,8 +144,8 @@ class Player:
         for atk in range(self.stats['attackSpeed']):
             dmg = self.equipped.atk * (abs(self.stats['strength'] - 1) * .1 + 1)
             log_message(f'You deal {dmg} damage to {enemy.type}')
-            if enemy.damage(dmg):
-                log_message(f'{enemy.type} has been vanquished!')
+            if enemy.damage(dmg, gs):
+                log_message(f'{the(enemy.type)}{enemy.type} has been vanquished!')
                 gs.enemies.remove(enemy)
                 self.score += enemy.max_hp
                 return
@@ -153,7 +155,7 @@ class Player:
     def damage(self, amt, enemy):
         self.hp -= amt
         if self.hp <= 0:
-            log_message(f'You were defeated by {enemy.type}. Game over.')
+            log_message(f'You were defeated by {the(enemy.type)}{enemy.type}. Game over.')
             requests.post('https://dungeon-of-curses.herokuapp.com/highscores', json={'user': self.name, 'score': self.score})
 
     def equip_weapon(self, weapon):

@@ -23,9 +23,12 @@ class Enemy:
         self.position = position
         return self
 
-    def damage(self, amt):
+    def damage(self, amt, gs):
         self.hp -= amt
         if self.hp <= 0:
+            item = self.weapon
+            item.position = self.position.copy()
+            gs.items.append(item)
             return True
         return False
 
