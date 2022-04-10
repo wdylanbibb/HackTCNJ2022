@@ -181,7 +181,13 @@ def game_loop(stdscr, gs):
         elif gs.is_dead:
             curses.curs_set(0)
             draw_box(stdscr, Rect(0, 0, width - 1, height - 1))
-            draw_label_centered(stdscr, (height // 2) - 1, '☠    You Lose!    ☠')
+            draw_label_centered(stdscr, (height // 2) - 7, '   _____                         ____                 ')
+            draw_label_centered(stdscr, (height // 2) - 6, '  / ____|                       / __ \                ')
+            draw_label_centered(stdscr, (height // 2) - 5, ' | |  __  __ _ _ __ ___   ___  | |  | |_   _____ _ __ ')
+            draw_label_centered(stdscr, (height // 2) - 4, " | | |_ |/ _` | '_ ` _ \ / _ \ | |  | \ \ / / _ \ '__|")
+            draw_label_centered(stdscr, (height // 2) - 3, ' | |__| | (☠| | | | | | |  __/ | |__| |\ V /  __/ |   ')
+            draw_label_centered(stdscr, (height // 2) - 2, '  \_____|\__,_|_| |_| |_|\___|  \____/  \_/ \___|_|   ')
+            draw_label_centered(stdscr, (height // 2) - 1, '                                                      ')
             draw_label_centered(stdscr, (height // 2), '☠ Press Q to Quit ☠')
         else:
             gs.draw(stdscr)

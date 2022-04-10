@@ -96,9 +96,6 @@ class Player:
 
         return PlayerInputResult.Nothing
 
-    def game_over(self):
-        pass
-
     def attack(self, gs, enemy):
         noneEquipped = self.equipped is None
         if noneEquipped:
@@ -116,7 +113,6 @@ class Player:
     def damage(self, amt, enemy):
         self.hp -= amt
         if self.hp <= 0:
-            self.game_over()
             log_message(f'You were defeated by {enemy.type}. Game over.')
 
     def equip_weapon(self, weapon):
