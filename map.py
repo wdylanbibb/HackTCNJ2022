@@ -1,7 +1,7 @@
 from __future__ import annotations
 from enum import Enum
 import random
-from utils import Rect
+from utils import Point, Rect
 
 class TileType(Enum):
     WALL = 1
@@ -18,6 +18,9 @@ def roll_dice(n: int, die_type: int) -> int:
 
 def xy_idx(x: int, y: int) -> int:
     return (y * MAP_WIDTH) + x
+
+def p_idx(p: Point) -> int:
+    return (p.y * MAP_WIDTH) + p.x
 
 def apply_room_to_map(room: Rect, map: Map):
     for y in range(room.y + 1, room.y + room.height):

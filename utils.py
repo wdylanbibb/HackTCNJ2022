@@ -32,3 +32,13 @@ class Point:
 
     def __str__(self) -> str:
         return f'({self.x}, {self.y})'
+    
+    def __add__(self, other):
+        x = self.x + other.x
+        y = self.y + other.y
+        return Point(x, y)
+    
+    def __sub__(self, other):
+        x = self.x - other.x
+        y = self.y - other.y
+        return Point(x, y)
