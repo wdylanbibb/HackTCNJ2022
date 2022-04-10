@@ -22,9 +22,10 @@ class Enemy:
 
     def attack(self):
         log_message(f'{self.type.title()} growls at you.')
-    
-    def move(self):
-        pass
+
+    def turn(self, gs):
+        if gs.player.position.distance(self.position) < 7:
+            log_message(f'{self.type.title()} stands there, menacingly.')
 
 def get_random_enemy():
     choices = ['an ogre', 'a goblin', 'a werewolf', 'an insurance salesman', 'Tom Cruise', 'your mother', 'a ball python', 'Yellow-bellied ferret']

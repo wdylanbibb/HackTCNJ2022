@@ -31,11 +31,7 @@ class Player:
 
         for npc in npcs:
             # dialog
-<<<<<<< HEAD
             npc.talk()
-=======
-            log_message(f'> {npc.name} - "{npc.next_message()}"')
->>>>>>> 54e3c7905d6be008a05b6715e81433cd973af61e
             return PlayerInputResult.Talk
         for enemy in enemies:
             # attack
@@ -76,8 +72,6 @@ class Player:
                 inc_index()
             elif event == ord('k') or event == curses.KEY_UP:
                 dec_index()
-
-            return PlayerInputResult.Nothing
 
         if event == ord('i'):
             toggle_inventory()

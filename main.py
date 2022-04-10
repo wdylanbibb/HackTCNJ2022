@@ -101,11 +101,13 @@ class Game:
 
                 self.enemies.append(get_random_enemy().set_position(point))
     
-    def enemy_move():
-        pass
+    def enemy_turn(self):
+        for enemy in self.enemies:
+            enemy.turn(self)
 
-    def npc_move():
-        pass
+    def npc_turn(self):
+        for npc in self.npcs:
+            npc.turn(self)
 
 
 def game_loop(stdscr, gs):
@@ -157,21 +159,33 @@ def game_loop(stdscr, gs):
             match gs.player.input(k, gs):
                 case PlayerInputResult.Move:
                     # Enemy Move
+                    gs.npc_turn()
+                    gs.enemy_turn()
                     pass
                 case PlayerInputResult.Attack:
                     # Enemy Move
+                    gs.npc_turn()
+                    gs.enemy_turn()
                     pass
                 case PlayerInputResult.Talk:
                     # Enemy Move
+                    gs.npc_turn()
+                    gs.enemy_turn()
                     pass
                 case PlayerInputResult.UseItem:
                     # Enemy Move
+                    gs.npc_turn()
+                    gs.enemy_turn()
                     pass
                 case PlayerInputResult.PickUp:
                     # Enemy Move
+                    gs.npc_turn()
+                    gs.enemy_turn()
                     pass
                 case PlayerInputResult.Wait:
                     # Enemy Move
+                    gs.npc_turn()
+                    gs.enemy_turn()
                     pass
                 case PlayerInputResult.Nothing:
                     # Nothing
