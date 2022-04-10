@@ -26,7 +26,9 @@ class NPC:
         return f'<Person - Name: {self.name}>'
 
     def talk(self):
-        log_message(f'{self.name}: "{self.next_message()}"')
+        msg, initial = self.next_message()
+        log_message(f'{self.name}: "{msg}"')
+        return initial
 
     def turn(self, gs):
         pass
@@ -36,12 +38,12 @@ class NPC:
     def next_message(self):
         if self.numVisited == 0:
             self.numVisited += 1
-            return self.initialDialog
+            return (self.initialDialog, True)
         if self.numVisited >= 5:
             self.numVisited += 1
-            return get_annoyed_dialog()
+            return (get_annoyed_dialog(), False)
         self.numVisited += 1
-        return self.returnDialog
+        return (self.returnDialog, False)
 
 def get_random_NPC():
     return NPC(names.get_full_name(), get_random_primary_line(), get_random_return_line())

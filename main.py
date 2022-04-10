@@ -7,6 +7,7 @@ import random
 import map as map_tools
 import log
 from enum import Enum
+from curses.textpad import Textbox, rectangle
 
 import curses
 
@@ -24,6 +25,7 @@ class Game:
         self.populate_rooms()
         self.is_dead = False
         self.depth = 1
+        self.introduced = False
 
     def draw_map(self, stdscr):
         for x in range(map_tools.MAP_WIDTH):
@@ -133,13 +135,13 @@ class Game:
         log.log_message("You descend into the dungeon...")
 
 def game_loop(stdscr, gs):
-    kk = 0
+    kk = ''
+    kw = 0
     k = 0
     height, width = stdscr.getmaxyx()
     cursor_x = 0
     cursor_y = 0
-
-    curses.curs_set(1)
+    
     stdscr.nodelay(True)
 
     # Clear and refresh the screen for a blank canvas
@@ -148,7 +150,10 @@ def game_loop(stdscr, gs):
     stdscr.refresh()
 
     curses.mousemask(1)
+    # curses.echo(True)
 
+    
+    player_name = ''
 
     # Start colors in curses
     curses.start_color()
@@ -157,7 +162,7 @@ def game_loop(stdscr, gs):
     log.log_message("Welcome to the Dungeon of Curses!")
 
     # Loop where k is the last character pressed
-    while (k != ord('q')):
+    while not (gs.introduced and k == ord('q')):
         # Initialization
         if k == curses.KEY_RESIZE:
             curses.resize_term(0, 0)
@@ -177,17 +182,25 @@ def game_loop(stdscr, gs):
                 [log.log_message("You see " + npc.name) for npc in gs.npcs if npc.position == Point(mx, my)]
                 [log.log_message("You see a(n) " + item.name) for item in gs.items if item.position == Point(mx, my)]
             else:
-                match gs.player.input(k, gs):
-                    case PlayerInputResult.Move | PlayerInputResult.Attack | PlayerInputResult.Talk | PlayerInputResult.UseItem | PlayerInputResult.PickUp | PlayerInputResult.Wait | PlayerInputResult.DropItem:
-                        # Enemy Move
-                        gs.npc_turn()
-                        gs.enemy_turn()
+                if gs.introduced:
+                    match gs.player.input(k, gs):
+                        case PlayerInputResult.Move | PlayerInputResult.Attack | PlayerInputResult.Talk | PlayerInputResult.UseItem | PlayerInputResult.PickUp | PlayerInputResult.Wait | PlayerInputResult.DropItem:
+                            # Enemy Move
+                            gs.npc_turn()
+                            gs.enemy_turn()
 
-                        if gs.player.hp <= 0:
-                            gs.is_dead = True
-                    case PlayerInputResult.Nothing:
-                        # Nothing
-                        pass
+                            if gs.player.hp <= 0:
+                                gs.is_dead = True
+                        case PlayerInputResult.Nothing:
+                            # Nothing
+                            pass
+                # else:
+                #     if kk == 0:
+                #         player_name = ' '
+                #     else:
+                #         player_name = str(kk)
+
+
 
         cursor_x = max(0, cursor_x)
         cursor_x = min(width-1, cursor_x)
@@ -197,6 +210,7 @@ def game_loop(stdscr, gs):
 
 
         if height <= 37 - 1 or width <= 80 - 1:
+            curses.curs_set(0)
             draw_label_centered(stdscr, (height // 2) - 1, 'Your screen is too small!')
             draw_label_centered(stdscr, (height // 2), 'Required: 80x37')
             draw_label_centered(stdscr, (height // 2) + 1, f'Current Size: {width}x{height}')
@@ -212,7 +226,24 @@ def game_loop(stdscr, gs):
             draw_label_centered(stdscr, (height // 2) - 1, '                                                      ')
             draw_label_centered(stdscr, (height // 2), f'☠ Score: {gs.player.score} ☠')
             draw_label_centered(stdscr, (height // 2) + 1, '☠ Press Q to Quit ☠')
+        elif not gs.introduced:
+            curses.curs_set(0)
+
+            if 32 <= k <= 126:
+                player_name += chr(k) if k in range(0x110000) else ''
+            else:
+                if k == 127:
+                    player_name = player_name[:-1]
+                elif k == ord('\n'):
+                    gs.introduced = True
+                    gs.player.name = player_name
+
+            draw_box(stdscr, Rect(0, 0, width - 1, height - 1))
+            draw_label_centered(stdscr, (height // 2) - 1, 'Hello, traveller. What is your name?')
+            draw_label_centered(stdscr, (height // 2), player_name)
+
         else:
+            curses.curs_set(1)
             gs.draw(stdscr)
 
         stdscr.move(cursor_y, cursor_x)
@@ -222,8 +253,6 @@ def game_loop(stdscr, gs):
 
         # Wait for next input
         k = stdscr.getch()
-
-        # kk = stdscr.getkey()
 
         stdscr.refresh()
 
@@ -235,3 +264,26 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# def draw_menu(stdscr):
+#     stdscr.addstr(0, 0, "Enter IM message: (hit Ctrl-G to send)")
+
+#     editwin = curses.newwin(5,30, 2,1)
+#     rectangle(stdscr, 1,0, 1+5+1, 1+30+1)
+#     stdscr.refresh()
+
+#     box = Textbox(editwin)
+
+#     # Let the user edit until Ctrl-G is struck.
+#     box.edit()
+
+#     # Get resulting contents
+#     message = box.gather()
+
+#     print(message)
+
+# def main():
+#     curses.wrapper(draw_menu)
+
+# if __name__ == "__main__":
+#     main()

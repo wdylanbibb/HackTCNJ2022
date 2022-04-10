@@ -34,7 +34,9 @@ class Player:
 
         for npc in npcs:
             # dialog
-            npc.talk()
+            initial_dialog = npc.talk()
+            if initial_dialog:
+                self.score += 20
             return PlayerInputResult.Talk
         for enemy in enemies:
             # attack
