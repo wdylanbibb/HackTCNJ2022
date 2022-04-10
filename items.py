@@ -68,16 +68,25 @@ class BuffItem(Item):
         super().__init__(name, description, detailedDesc, cocktail=True)
         self.stat = stat
         self.buff = buff
-    
+
     def get_name(self):
         return self.name
 
     def use(self, player):
         player.stats[self.stat] += self.buff
+        target_string = self.stat
+        l = list(target_string)
+
+        result = re.search(r"([A-Z])", target_string)
+        if result:
+            pos = result.start(1)
+
+            l.insert(pos, ' ')
+
         if self.buff > 0:
-            log_message(f'You drank the {self.name} and suddenly gained {str(self.buff)} {" ".join([i.lower() for i in re.split(r"[A-Z]", self.stat)])}!')
+            log_message(f'You drank the {self.name} and suddenly gained {str(self.buff)} {("".join(l)).lower()}!')
         else:
-            log_message(f'You drank the {self.name} and suddenly lost {str(self.buff)} {" ".join([i.lower() for i in re.split(r"[A-Z]", self.stat)])}!')
+            log_message(f'You drank the {self.name} and suddenly lost {str(abs(self.buff))} {("".join(l)).lower()}!')
         return False
 
     def __str__(self) -> str:

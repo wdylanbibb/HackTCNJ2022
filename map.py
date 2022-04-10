@@ -3,6 +3,10 @@ from enum import IntEnum
 import random
 from utils import Point, Rect
 
+from pathfinding.core.diagonal_movement import DiagonalMovement
+from pathfinding.core.grid import Grid
+from pathfinding.finder.a_star import AStarFinder
+
 class TileType(IntEnum):
     WALL = 0
     FLOOR = 1
@@ -71,3 +75,35 @@ def new_map_rooms_and_corridors(max_rooms: int, min_size: int, max_size: int) ->
             rooms.append(new_room)
 
     return (rooms, map)
+
+def get_2d_map(map: Map):
+    map_2d = []
+
+    for y in range(MAP_HEIGHT):
+        map_2d.append(map[xy_idx(0, y):xy_idx(0, y) + MAP_WIDTH])
+
+    return map_2d
+
+def print_2d_map(map: Map):
+    map_2d = get_2d_map(map)
+
+    for y in range(MAP_HEIGHT):
+        for x in range(MAP_WIDTH):
+            match map_2d[y][x]:
+                case TileType.FLOOR:
+                    print('.', end='')
+                case TileType.WALL:
+                    print('#', end='')
+        print()
+
+
+def get_path_to(map, start, end):
+    grid = Grid(matrix=get_2d_map(map))
+    
+    start = grid.node(start.x, start.y)
+    end = grid.node(end.x, end.y)
+
+    finder = AStarFinder(diagonal_movement=DiagonalMovement.never)
+    path, _ = finder.find_path(start, end, grid)
+
+    return path
