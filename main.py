@@ -1,10 +1,13 @@
+from NPC import get_random_NPC
+from enemy import get_random_enemy
+from items import BuffItem, HealthItem, Weapon
 from player import Player
-import player
 import random
 import map as map_tools
 
 import curses
 
+from yamlReader import get_random_health_item, get_random_potion, get_random_weapon, import_items
 from utils import Point, Rect
 
 def draw_box(stdscr, rect: Rect):
@@ -26,6 +29,11 @@ class Game:
     def __init__(self) -> None:
         self.room_list, self.map = map_tools.new_map_rooms_and_corridors(30, 6, 10)
         self.player = Player(Point(self.room_list[0].center()[0], self.room_list[0].center()[1]), "Player", 100, 1, 1)
+        self.items = []
+        self.enemies = []
+        self.npcs = []
+        import_items()
+        self.populate_rooms()
 
     def draw_map(self, stdscr):
         for x in range(map_tools.MAP_WIDTH):
@@ -35,6 +43,24 @@ class Game:
                         stdscr.addch(y, x, '#')
                     case map_tools.TileType.FLOOR:
                         stdscr.addch(y, x, '.')
+
+    def draw_items(self, stdscr):
+        for item in self.items:
+            if isinstance(item, Weapon):
+                stdscr.addch(item.position.y, item.position.x, '?')
+            elif item.cocktail:
+                stdscr.addch(item.position.y, item.position.x, '\U0001f378')
+            else:
+                stdscr.addch(item.position.y, item.position.x, '\u1F33D')
+
+            
+    def draw_npcs(self, stdscr):
+        for item in self.items:
+            stdscr.addch(item.position.y, item.position.x, '?')
+
+    def draw_enemies(self, stdscr):
+        for item in self.items:
+            stdscr.addch(item.position.y, item.position.x, '?')
 
     def draw_player(self, stdscr):
         stdscr.addch(self.player.position.y, self.player.position.x, '@')
@@ -49,10 +75,37 @@ class Game:
     def draw(self, stdscr):
         # draw map
         self.draw_map(stdscr)
-
         self.draw_player(stdscr)
-
         self.draw_ui(stdscr)
+
+    def populate_rooms(self):
+        for room in self.room_list:
+            itemNum = random.randint(0, room.width // 5)
+            usedPoints: list[Point] = [Point(room.x + (room.width // 2), room.y + (room.height // 2))]
+            for i in range(itemNum):
+                point = Point(room.x + random.randint(0, room.width - 1), room.y + random.randint(0, room.height - 1))
+                while point in usedPoints:
+                    point = Point(room.x + random.randint(0, room.width - 1), room.y + random.randint(0, room.height - 1))
+                usedPoints.append(point)
+                match random.randint(0, 2):
+                    case 0:
+                        item = get_random_weapon().set_position(point)
+                    case 1:
+                        item = get_random_health_item().set_position(point)
+                    case 2:
+                        item = get_random_potion().set_position(point)
+                self.items.append(item)
+            if random.randint(1, 20) == 1:
+                point = Point(room.x + random.randint(0, room.width - 1), room.y + random.randint(0, room.height - 1))
+                while point in usedPoints:
+                    point = Point(room.x + random.randint(0, room.width - 1), room.y + random.randint(0, room.height - 1))
+                usedPoints.append(point)
+                self.npcs.append(get_random_NPC().set_position(point))
+
+            if random.randint(1, 4) >= 2:
+                point = usedPoints[0]
+
+                self.enemies.append(get_random_enemy().set_position(point))
 
 
 def game_loop(stdscr, gs):
@@ -82,8 +135,11 @@ def game_loop(stdscr, gs):
     # Loop where k is the last character pressed
     while (k != ord('q')):
         # Initialization
+        if k == curses.KEY_RESIZE:
+            curses.resize_term(0, 0)
         stdscr.erase()
         height, width = stdscr.getmaxyx()
+        print(height, width)
 
         # if k == curses.KEY_RESIZE:
         #     stdscr.addstr(0, 0, f'{width}, {height}')

@@ -30,12 +30,7 @@ def get_random_potion() -> Item:
     stat = random.randint(0, 2)
     if stat == 2:
         amt = random.randint(1, 10)
-        return HealthItem(drink['strDrink'], drink['strDrink'], f'In a glass is an intoxicating {drink["strDrink"]}.', amt, 1)
+        return HealthItem(drink['strDrink'], drink['strDrink'], f'In a glass is an intoxicating {drink["strDrink"]}.', amt, cocktail=True, uses=1)
     amt = random.randint(1, 3)
     if random.randint(1, 10) == 1: amt *= -1
     return BuffItem(drink['strDrink'], drink['strDrink'], f'In a glass is an intoxicating {drink["strDrink"]}.', ['strength', 'attackSpeed'][stat], amt)
-
-import_items()
-# print(get_random_weapon())
-print(get_random_health_item())
-print(get_random_potion())
