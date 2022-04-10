@@ -1,11 +1,12 @@
 from NPC import get_random_NPC
-from draw import draw_box, draw_inventory, draw_label, draw_label_centered
+from draw import draw_box, draw_inventory, draw_label, draw_label_centered, toggle_inventory
 from enemy import get_random_enemy
 from items import BuffItem, HealthItem, Weapon
-from player import Player
+from player import Player, PlayerInputResult
 import random
 import map as map_tools
 import log
+from enum import Enum
 
 import curses
 
@@ -58,7 +59,7 @@ class Game:
         draw_label(stdscr, Point(2, 30), " " + self.player.name + " ")
 
         draw_label(stdscr, Point(20, 30), " " + str(self.player.hp) + " / " + str(self.player.max_hp) + " ")
-        
+
         log.draw_messages(stdscr)
 
     def draw(self, stdscr):
@@ -142,8 +143,33 @@ def game_loop(stdscr, gs):
             _, mx, my, _, _ = curses.getmouse()
             cursor_x = mx
             cursor_y = my
+
+            [log.log_message("You see " + enemy.type) for enemy in gs.enemies if enemy.position == Point(mx, my)]
+            [log.log_message("You see " + npc.name) for npc in gs.npcs if npc.position == Point(mx, my)]
+            [log.log_message("You see a(n) " + item.name) for item in gs.items if item.position == Point(mx, my)]
         else:
-            gs.player.input(k, gs)
+            match gs.player.input(k, gs):
+                case PlayerInputResult.Move:
+                    # Enemy Move
+                    pass
+                case PlayerInputResult.Attack:
+                    # Enemy Move
+                    pass
+                case PlayerInputResult.Talk:
+                    # Enemy Move
+                    pass
+                case PlayerInputResult.UseItem:
+                    # Enemy Move
+                    pass
+                case PlayerInputResult.PickUp:
+                    # Enemy Move
+                    pass
+                case PlayerInputResult.Wait:
+                    # Enemy Move
+                    pass
+                case PlayerInputResult.Nothing:
+                    # Nothing
+                    pass
 
         cursor_x = max(0, cursor_x)
         cursor_x = min(width-1, cursor_x)

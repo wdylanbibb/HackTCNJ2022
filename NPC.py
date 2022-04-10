@@ -1,4 +1,5 @@
 import random
+import log
 import names
 from items import Item
 from utils import Point
@@ -17,7 +18,7 @@ class NPC:
     def set_position(self, position: Point):
         self.position = position
         return self
-        
+
     def addItem(self, item: Item):
         self.inventory.append(item)
 

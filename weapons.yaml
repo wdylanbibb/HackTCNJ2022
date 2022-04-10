@@ -46,5 +46,5 @@ weapons:
 
   Sludgehammer:
     description: a typical sludgehammer
-    detailedDescription: It's sopping wet. Wait, did you read that right?
+    detailedDescription: Wait, did you read that right? It's sopping wet.
     damage: 6
