@@ -1,9 +1,6 @@
+import re
 from log import log_message
 from utils import Point, Rect
-from enum import Enum
-
-
-
 
 
 def draw_box(stdscr, rect: Rect):
@@ -67,10 +64,21 @@ def draw_inventory(stdscr, inventory, equipped):
         draw_label(stdscr, Point(34, 11), '─' * 13)
         if invStartIdx > 0:
             draw_label(stdscr, Point(40, 13), '☝')
+        offset = 0
         for idx, item in enumerate(inventory[invStartIdx:invStartIdx + 6]):
             if item == equipped:
-                draw_label(stdscr, Point(16, 14 + idx * 2), '*')
-            draw_label(stdscr, Point(18, 14 + idx * 2), ('> ' if idx + invStartIdx == invIndex else '') + item.get_name())
+                draw_label(stdscr, Point(16, 14 + (idx + offset) * 2), '*')
+            words = re.split(r"\s+", item.get_name())
+            msg = ''
+            for word in words:
+                
+                if len(word) + 1 + len(msg) < 30:
+                    msg += word + ' '
+                else:
+                    draw_label(stdscr, Point(18, 14 + (idx + offset) * 2), ('> ' if idx + invStartIdx == invIndex else '') + msg)
+                    offset += 1
+                    msg = word + ' '
+            draw_label(stdscr, Point(18, 14 + (idx + offset) * 2), ('> ' if idx + invStartIdx == invIndex else '') + msg)
         if len(inventory) - 1 > invStartIdx + 5:
             draw_label(stdscr, Point(40, 27), '☟')
         if invIndex >= 0 and lastIndex != invIndex:
