@@ -23,6 +23,7 @@ class Game:
         import_items()
         self.populate_rooms()
         self.is_dead = False
+        self.depth = 1
 
     def draw_map(self, stdscr):
         for x in range(map_tools.MAP_WIDTH):
@@ -58,6 +59,8 @@ class Game:
 
     def draw_ui(self, stdscr):
         draw_box(stdscr, Rect(0, 30, 80, 6))
+
+        draw_label(stdscr, Point(1, 0), f' Depth: {self.depth} ')
 
         draw_label(stdscr, Point(2, 30), " " + self.player.name + " ")
 
@@ -111,6 +114,19 @@ class Game:
     def npc_turn(self):
         for npc in self.npcs:
             npc.turn(self)
+
+    def delve_deeper(self):
+        self.room_list, self.map = map_tools.new_map_rooms_and_corridors(30, 6, 10)
+        self.player.position = Point(self.room_list[0].center()[0], self.room_list[0].center()[1])
+        self.items = []
+        self.enemies = []
+        self.npcs = []
+        import_items()
+        self.populate_rooms()
+        self.depth += 1
+        
+        log.clear_log()
+        log.log_message("You descend into the dungeon...")
 
 def game_loop(stdscr, gs):
     kk = 0

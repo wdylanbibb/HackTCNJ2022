@@ -16,6 +16,9 @@ def log_message(msg: str):
     logs.insert(0, msg)
     logs = logs[0:5]
 
+def clear_log():
+    logs.clear()
+
 def draw_messages(stdscr):
     for i, log in enumerate(logs):
         stdscr.addstr(35 - i, 2, log)
