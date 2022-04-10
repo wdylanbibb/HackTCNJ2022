@@ -1,3 +1,6 @@
+import math
+from log import log_message
+from player import Player
 from utils import Point
 
 
@@ -12,10 +15,17 @@ class Item:
         self.position = position
         return self
 
+    def use(self, player: Player):
+        return True
+
 class Weapon(Item):
     def __init__(self, name: str, description: str, detailedDesc: str, atk: int) -> None:
         super().__init__(name, description, detailedDesc)
         self.atk = atk
+
+    def use(self, player: Player):
+        log_message("You can't use this right now.")
+        return True
 
     def __str__(self) -> str:
         return f'<Weapon - Name: {self.name}, Description: {self.description}, Detailed Description: {self.detailedDesc}, ATK: {self.atk}>'
@@ -26,6 +36,15 @@ class HealthItem(Item):
         self.healingAmt = healingAmt
         self.uses = uses
 
+    def use(self, player: Player):
+        self.uses -= 1
+        player.hp = min(player.max_hp, player.hp + self.healingAmt)
+        log_message(f'You ate/drank the {self.name} and gained {self.healingAmt} health.')
+        if self.uses == 0:
+            log_message('You finished it! It is gone from your inventory.')
+            return False
+        return True
+
     def __str__(self) -> str:
         return f'<HealthItem - Name: {self.name}, Description: {self.description}, Detailed Description: {self.detailedDesc}, Healing: {self.healingAmt}, Uses: {self.uses}>'
 
@@ -35,6 +54,14 @@ class BuffItem(Item):
         super().__init__(name, description, detailedDesc, cocktail=True)
         self.stat = stat
         self.buff = buff
+
+    def use(self, player: Player):
+        player.stats[self.stat] += self.buff
+        if self.buff > 0:
+            log_message(f'You drank the {self.name} and suddenly gained {str(self.buff)} {" ".join([i.lower() for i in self.stat.split(r"[A-Z]")])}!')
+        else:
+            log_message(f'You drank the {self.name} and suddenly lost {str(self.buff)} {" ".join([i.lower() for i in self.stat.split(r"[A-Z]")])}!')
+        return False
 
     def __str__(self) -> str:
         return f'<BuffItem - Name: {self.name}, Description: {self.description}, Detailed Description: {self.detailedDesc}, Stat: {self.stat}, Buff: {self.buff}>'

@@ -59,6 +59,9 @@ class Player:
                 inc_index()
             elif event == ord('k') or event == curses.KEY_UP:
                 dec_index()
+            elif event == curses.KEY_SPACE:
+                if not self.inventory[get_idx()].use(self):
+                    self.inventory.pop(get_idx())
 
             return PlayerInputResult.Nothing
 
