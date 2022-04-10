@@ -5,8 +5,6 @@ from log import log_message
 from map import TileType, get_2d_map, get_path_to, p_idx, xy_idx
 from utils import Point
 from yamlReader import get_random_weapon
-import astar
-
 
 class Enemy:
     def __init__(self, enemyType: str, hp: int, weapon: Weapon) -> None:
