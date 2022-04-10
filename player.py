@@ -137,7 +137,7 @@ class Player:
         for atk in range(self.stats['attackSpeed']):
             dmg = self.equipped.atk * (abs(self.stats['strength'] - 1) * .1 + 1)
             log_message(f'You deal {dmg} damage to {enemy.type}')
-            if enemy.damage(dmg):
+            if enemy.damage(dmg, gs):
                 log_message(f'{enemy.type} has been vanquished!')
                 gs.enemies.remove(enemy)
                 self.score += enemy.max_hp
