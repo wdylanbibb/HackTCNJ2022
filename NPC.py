@@ -4,9 +4,12 @@ from items import Item
 from utils import Point
 
 class NPC:
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, initialDialog: str, returnDialog: str, annoyedDialog: str) -> None:
         self.name = name
         self.inventory: list[Item] = []
+        self.initialDialog = initialDialog
+        self.returnDialog = returnDialog
+        self.annoyedDialog = annoyedDialog
 
     def set_position(self, position: Point):
         self.position = position

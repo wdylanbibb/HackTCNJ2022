@@ -1,5 +1,6 @@
 from hashlib import new
 from draw import dec_index, get_idx, inc_index, is_show_inventory, toggle_inventory
+from log import log_message
 import map
 from utils import Point
 import curses

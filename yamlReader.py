@@ -21,7 +21,7 @@ def get_random_health_item() -> HealthItem:
     food = requests.get('https://www.themealdb.com/api/json/v1/1/random.php').json()['meals'][0]
     uses = 2 if random.randint(1, 30) == 1 else 1
     random.seed(food['idMeal'])
-    healthItem = HealthItem(food['strMeal'], food['strMeal'], f'This is a {random.choice(["tasty", "delicious", "yummy", "nutritious", "hearty", "wholesome", "ready-to-eat"])} plate of {food["strMeal"].lower()}.', random.randint(1, 10), uses)
+    healthItem = HealthItem(food['strMeal'], food['strMeal'], f'This is a {random.choice(["tasty", "delicious", "yummy", "nutritious", "hearty", "wholesome", "ready-to-eat"])} plate of {food["strMeal"].lower()}.', random.randint(1, 10), uses=uses)
     return healthItem
 
 def get_random_potion() -> Item:
@@ -30,7 +30,7 @@ def get_random_potion() -> Item:
     stat = random.randint(0, 2)
     if stat == 2:
         amt = random.randint(1, 10)
-        return HealthItem(drink['strDrink'], drink['strDrink'], f'In a glass is an intoxicating {drink["strDrink"]}.', amt, cocktail=True, uses=1)
+        return HealthItem(drink['strDrink'], drink['strDrink'], f'In a glass is an intoxicating {drink["strDrink"]}.', amt, cocktail=True)
     amt = random.randint(1, 3)
     if random.randint(1, 10) == 1: amt *= -1
     return BuffItem(drink['strDrink'], drink['strDrink'], f'In a glass is an intoxicating {drink["strDrink"]}.', ['strength', 'attackSpeed'][stat], amt)
