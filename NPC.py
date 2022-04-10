@@ -36,7 +36,7 @@ class NPC:
     def next_message(self):
         if self.numVisited == 0:
             self.numVisited += 1
-            return self.initialDialog;
+            return self.initialDialog
         if self.numVisited >= 5:
             self.numVisited += 1
             return get_annoyed_dialog()
