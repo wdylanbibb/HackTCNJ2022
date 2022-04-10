@@ -59,7 +59,7 @@ class Enemy:
                     self.position = Point(path[1 if len(path) > 1 else 0][0], path[1 if len(path) > 1 else 0][1])
 
 def get_random_enemy():
-    choices = ['ogre', 'goblin', 'werewolf', 'insurance salesman', 'Tom Cruise', 'Your Mother', 'ball python', 'rose-bellied ferret']
+    choices = ['The Jolly Green Giant', 'ogre', 'goblin', 'werewolf', 'insurance salesman', 'Tom Cruise', 'Your Mother', 'ball python', 'rose-bellied ferret']
     type = random.choice(choices)
     hp = (len(choices) - choices.index(type)) * random.randint(5, 10)
     weapon = get_random_weapon()
