@@ -15,6 +15,7 @@ class PlayerInputResult(Enum):
     PickUp = 5
     Wait = 7
     Nothing = 8
+    DropItem = 9
 
 class Player:
     def __init__(self, position: Point, name: str, health: int, strength: int, attackSpeed: int) -> None:
@@ -80,6 +81,15 @@ class Player:
                 if not self.inventory[get_idx()].use(self):
                     self.inventory.pop(get_idx())
                 return PlayerInputResult.UseItem
+            elif event == ord('g'):
+                item = self.inventory[get_idx()]
+                item.position = self.position.copy()
+                gs.items.append(item)
+                self.inventory.remove(item)
+                log_message(f'You drop the {item.name}.')
+                if item == self.equipped:
+                    self.unequip_weapon()
+                return PlayerInputResult.DropItem
 
         if event == ord('i'):
             toggle_inventory()

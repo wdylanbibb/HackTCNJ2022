@@ -187,6 +187,11 @@ def game_loop(stdscr, gs):
                     gs.npc_turn()
                     gs.enemy_turn()
                     pass
+                case PlayerInputResult.DropItem:
+                    # Enemy Move
+                    gs.npc_turn()
+                    gs.enemy_turn()
+                    pass
                 case PlayerInputResult.Nothing:
                     # Nothing
                     pass
