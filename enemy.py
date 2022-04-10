@@ -20,8 +20,15 @@ class Enemy:
         self.position = position
         return self
 
-    def attack(self):
-        log_message(f'{self.type.title()} growls at you.')
+    def damage(self, amt):
+        self.hp -= amt
+        if self.hp <= 0:
+            log_message(f'You defeated {self.name}! Good job!')
+            return True
+        return False
+
+    def attack(self, player):
+        player.damage(self.weapon.atk * 1.2)
 
     def turn(self, gs):
         if gs.player.position.distance(self.position) < 7:
