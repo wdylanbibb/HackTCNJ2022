@@ -10,6 +10,7 @@ from pathfinding.finder.a_star import AStarFinder
 class TileType(IntEnum):
     WALL = 0
     FLOOR = 1
+    DOWNSTAIR = 2
 
 MAP_WIDTH = 80
 MAP_HEIGHT = 30
@@ -77,6 +78,10 @@ def new_map_rooms_and_corridors(max_rooms: int, min_size: int, max_size: int, ma
 
             rooms.append(new_room)
 
+    stair_pos_x, stair_pos_y = rooms[-1].center()
+    stairs_idx = xy_idx(stair_pos_x, stair_pos_y)
+    map[stairs_idx] = TileType.DOWNSTAIR
+
     return (rooms, map)
 
 def get_2d_map(map: Map):
@@ -97,12 +102,14 @@ def print_2d_map(map: Map):
                     print('.', end='')
                 case TileType.WALL:
                     print('#', end='')
+                case TileType.DOWNSTAIR:
+                    print('>', end='')
         print()
 
 
 def get_path_to(map, start, end):
     grid = Grid(matrix=get_2d_map(map))
-    
+
     start = grid.node(start.x, start.y)
     end = grid.node(end.x, end.y)
 

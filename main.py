@@ -22,6 +22,7 @@ class Game:
         self.npcs = []
         import_items()
         self.populate_rooms()
+        self.is_dead = False
 
     def draw_map(self, stdscr):
         for x in range(map_tools.MAP_WIDTH):
@@ -31,6 +32,8 @@ class Game:
                         stdscr.addch(y, x, '#')
                     case map_tools.TileType.FLOOR:
                         stdscr.addch(y, x, ' ')
+                    case map_tools.TileType.DOWNSTAIR:
+                        stdscr.addch(y, x, '>')
 
     def draw_items(self, stdscr):
         for item in self.items:
@@ -58,7 +61,7 @@ class Game:
 
         draw_label(stdscr, Point(2, 30), " " + self.player.name + " ")
 
-        draw_label(stdscr, Point(20, 30), " " + str(self.player.hp) + " / " + str(self.player.max_hp) + " ")
+        draw_label(stdscr, Point(20, 30), " " + str(int(self.player.hp)) + " / " + str(self.player.max_hp) + " ")
 
         log.draw_messages(stdscr)
 
@@ -100,7 +103,7 @@ class Game:
                 point = usedPoints[0]
 
                 self.enemies.append(get_random_enemy().set_position(point))
-    
+
     def enemy_turn(self):
         for enemy in self.enemies:
             enemy.turn(self)
@@ -108,7 +111,6 @@ class Game:
     def npc_turn(self):
         for npc in self.npcs:
             npc.turn(self)
-
 
 def game_loop(stdscr, gs):
     kk = 0
@@ -129,10 +131,6 @@ def game_loop(stdscr, gs):
 
 
     # Start colors in curses
-    curses.start_color()
-    curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
-    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
-    curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
     log.log_message("Welcome to the Dungeon of Curses!")
 
@@ -147,54 +145,27 @@ def game_loop(stdscr, gs):
 
         # if k == curses.KEY_RESIZE:
         #     stdscr.addstr(0, 0, f'{width}, {height}')
-        if k == curses.KEY_MOUSE:
-            _, mx, my, _, _ = curses.getmouse()
-            cursor_x = mx
-            cursor_y = my
+        if not gs.is_dead:
+            if k == curses.KEY_MOUSE:
+                _, mx, my, _, _ = curses.getmouse()
+                cursor_x = mx
+                cursor_y = my
 
-            [log.log_message("You see " + enemy.type) for enemy in gs.enemies if enemy.position == Point(mx, my)]
-            [log.log_message("You see " + npc.name) for npc in gs.npcs if npc.position == Point(mx, my)]
-            [log.log_message("You see a(n) " + item.name) for item in gs.items if item.position == Point(mx, my)]
-        else:
-            match gs.player.input(k, gs):
-                case PlayerInputResult.Move:
-                    # Enemy Move
-                    gs.npc_turn()
-                    gs.enemy_turn()
-                    pass
-                case PlayerInputResult.Attack:
-                    # Enemy Move
-                    gs.npc_turn()
-                    gs.enemy_turn()
-                    pass
-                case PlayerInputResult.Talk:
-                    # Enemy Move
-                    gs.npc_turn()
-                    gs.enemy_turn()
-                    pass
-                case PlayerInputResult.UseItem:
-                    # Enemy Move
-                    gs.npc_turn()
-                    gs.enemy_turn()
-                    pass
-                case PlayerInputResult.PickUp:
-                    # Enemy Move
-                    gs.npc_turn()
-                    gs.enemy_turn()
-                    pass
-                case PlayerInputResult.Wait:
-                    # Enemy Move
-                    gs.npc_turn()
-                    gs.enemy_turn()
-                    pass
-                case PlayerInputResult.DropItem:
-                    # Enemy Move
-                    gs.npc_turn()
-                    gs.enemy_turn()
-                    pass
-                case PlayerInputResult.Nothing:
-                    # Nothing
-                    pass
+                [log.log_message("You see " + enemy.type) for enemy in gs.enemies if enemy.position == Point(mx, my)]
+                [log.log_message("You see " + npc.name) for npc in gs.npcs if npc.position == Point(mx, my)]
+                [log.log_message("You see a(n) " + item.name) for item in gs.items if item.position == Point(mx, my)]
+            else:
+                match gs.player.input(k, gs):
+                    case PlayerInputResult.Move | PlayerInputResult.Attack | PlayerInputResult.Talk | PlayerInputResult.UseItem | PlayerInputResult.PickUp | PlayerInputResult.Wait | PlayerInputResult.DropItem:
+                        # Enemy Move
+                        gs.npc_turn()
+                        gs.enemy_turn()
+
+                        if gs.player.hp <= 0:
+                            gs.is_dead = True
+                    case PlayerInputResult.Nothing:
+                        # Nothing
+                        pass
 
         cursor_x = max(0, cursor_x)
         cursor_x = min(width-1, cursor_x)
@@ -207,8 +178,14 @@ def game_loop(stdscr, gs):
             draw_label_centered(stdscr, (height // 2) - 1, 'Your screen is too small!')
             draw_label_centered(stdscr, (height // 2), 'Required: 80x37')
             draw_label_centered(stdscr, (height // 2) + 1, f'Current Size: {width}x{height}')
+        elif gs.is_dead:
+            curses.curs_set(0)
+            draw_box(stdscr, Rect(0, 0, width - 1, height - 1))
+            draw_label_centered(stdscr, (height // 2) - 1, '☠    You Lose!    ☠')
+            draw_label_centered(stdscr, (height // 2), '☠ Press Q to Quit ☠')
         else:
             gs.draw(stdscr)
+
         stdscr.move(cursor_y, cursor_x)
 
         # Refresh the screen
