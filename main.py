@@ -1,4 +1,5 @@
 from NPC import get_random_NPC
+from draw import draw_box, draw_inventory, draw_label, draw_label_centered
 from enemy import get_random_enemy
 from items import BuffItem, HealthItem, Weapon
 from player import Player
@@ -9,21 +10,6 @@ import curses
 
 from yamlReader import get_random_health_item, get_random_potion, get_random_weapon, import_items
 from utils import Point, Rect
-
-def draw_box(stdscr, rect: Rect):
-    stdscr.addstr(rect.y, rect.x, "┌" + ("─" * (rect.width - 2)) + "┐")
-    for y in range(1, rect.height):
-        stdscr.addstr(rect.y + y, rect.x, "│" + (" " * (rect.width - 2)) + "│")
-    stdscr.addstr(rect.y + rect.height, rect.x, "└" + ("─" * (rect.width - 2)) + "┘")
-
-def draw_label(stdscr, pos: Point, msg: str):
-    _, width = stdscr.getmaxyx()
-
-    stdscr.addstr(pos.y, max(pos.x, 0), msg[abs(min(pos.x, 0)):width])
-
-def draw_label_centered(stdscr, y: int, msg: str):
-    _, width = stdscr.getmaxyx()
-    draw_label(stdscr, Point((width // 2) - (len(msg) // 2), y), msg)
 
 class Game:
     def __init__(self) -> None:
@@ -80,6 +66,7 @@ class Game:
         self.draw_enemies(stdscr)
         self.draw_items(stdscr)
         self.draw_npcs(stdscr)
+        draw_inventory(stdscr, self.player.inventory)
 
     def populate_rooms(self):
         for room in self.room_list:

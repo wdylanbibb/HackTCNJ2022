@@ -1,3 +1,4 @@
+from draw import dec_index, inc_index, is_show_inventory, toggle_inventory
 import map
 from utils import Point
 import curses
@@ -13,17 +14,27 @@ class Player:
 
     def input(self, event, gs):
         if event == ord('h') or event == curses.KEY_LEFT:
-            if gs.map[map.p_idx(self.position + Point(-1, 0))] == map.TileType.FLOOR:
-                self.position += Point(-1, 0)
+            if not is_show_inventory():
+                if gs.map[map.p_idx(self.position + Point(-1, 0))] == map.TileType.FLOOR:
+                    self.position += Point(-1, 0)
         elif event == ord('j') or event == curses.KEY_DOWN:
-            if gs.map[map.p_idx(self.position + Point(0, 1))] == map.TileType.FLOOR:
-                self.position += Point(0, 1)
+            if not is_show_inventory():
+                if gs.map[map.p_idx(self.position + Point(0, 1))] == map.TileType.FLOOR:
+                    self.position += Point(0, 1)
+            else:
+                inc_index()
         elif event == ord('k') or event == curses.KEY_UP:
-            if gs.map[map.p_idx(self.position + Point(0, -1))] == map.TileType.FLOOR:
-                self.position += Point(0, -1)
+            if not is_show_inventory():
+                if gs.map[map.p_idx(self.position + Point(0, -1))] == map.TileType.FLOOR:
+                    self.position += Point(0, -1)
+            else:
+                dec_index()
         elif event == ord('l') or event == curses.KEY_RIGHT:
-            if gs.map[map.p_idx(self.position + Point(1, 0))] == map.TileType.FLOOR:
-                self.position += Point(1, 0)
+            if not is_show_inventory():
+                if gs.map[map.p_idx(self.position + Point(1, 0))] == map.TileType.FLOOR:
+                    self.position += Point(1, 0)
+        elif event == ord('i'):
+            toggle_inventory()
         items = [i for i in gs.items if i.position == self.position]
         npc = [i for i in gs.npcs if i.position == self.position]
         enemy = [i for i in gs.enemies if i.position == self.position]
