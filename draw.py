@@ -109,7 +109,7 @@ def draw_inventory(stdscr, inventory, equipped):
                     offset += 1
                     msg = word + ' '
                     firstLine = False
-            draw_label(stdscr, Point(18, 14 + (idx + offset) * 2), ('> ' if idx + invStartIdx == invIndex else '') + msg)
+            draw_label(stdscr, Point(18, 14 + (idx + offset) * 2), ('> ' if idx + invStartIdx == invIndex and firstLine else '') + msg)
         if len(inventory) - 1 > invStartIdx + 5:
             draw_label(stdscr, Point(40, 27), '☟')
         if invIndex >= 0 and lastIndex != invIndex:
@@ -138,6 +138,7 @@ def draw_legend(stdscr, legend):
             draw_label(stdscr, Point(40, 13), '☝')
         offset = 0
         for idx, item in enumerate(legend[legStartIdx:legStartIdx + 6]):
+            firstLine = True
             words = re.split(r"\s+", item['key'] + ' - ' + item['value'])
             msg = ''
             for word in words:
@@ -145,9 +146,10 @@ def draw_legend(stdscr, legend):
                 if len(word) + 1 + len(msg) < 30:
                     msg += word + ' '
                 else:
-                    draw_label(stdscr, Point(18, 14 + (idx + offset) * 2), ('> ' if idx + legStartIdx == legIndex else '') + msg)
+                    draw_label(stdscr, Point(18, 14 + (idx + offset) * 2), ('> ' if idx + legStartIdx == legIndex and firstLine else '') + msg)
                     offset += 1
                     msg = word + ' '
-            draw_label(stdscr, Point(18, 14 + (idx + offset) * 2), ('> ' if idx + legStartIdx == legIndex else '') + msg)
+                    firstLine = False
+            draw_label(stdscr, Point(18, 14 + (idx + offset) * 2), ('> ' if idx + legStartIdx == legIndex and firstLine else '') + msg)
         if len(legend) - 1 > legStartIdx + 5:
             draw_label(stdscr, Point(40, 27), '☟')

@@ -81,7 +81,7 @@ class Game:
         self.draw_npcs(stdscr)
         self.draw_player(stdscr)
         draw_inventory(stdscr, self.player.inventory, self.player.equipped)
-        draw_legend(stdscr, [{'key': '>', 'value': 'stairs'}, {'key': 'u', 'value': 'cocktail'}, {'key': '%', 'value': 'food'}, {'key': '/', 'value': 'weapon'}, {'key': 'y', 'value': 'Your Mother'}, {'key': 't', 'value': 'Tom Cruise'}, {'key': 'w', 'value': 'werewolf'}, {'key': 'o', 'value': 'ogre'}, {'key': 'g', 'value': 'goblin'}, {'key': 'b', 'value': 'ball python'}, {'key': 'i', 'value': 'insurance salesman'}, {'key': 'r', 'value': 'rose-bellied ferret'}])
+        draw_legend(stdscr, [{'key': '>', 'value': 'stairs'}, {'key': 'u', 'value': 'cocktail'}, {'key': '%', 'value': 'food'}, {'key': '/', 'value': 'weapon'}, {'key': 'y', 'value': 'Your Mother'}, {'key': 't', 'value': 'Tom Cruise'}, {'key': 'w', 'value': 'werewolf'}, {'key': 'o', 'value': 'ogre'}, {'key': 'j', 'value': 'Jolly Green Giant'}, {'key': 'g', 'value': 'goblin'}, {'key': 'b', 'value': 'ball python'}, {'key': 'i', 'value': 'insurance salesman'}, {'key': 'r', 'value': 'rose-bellied ferret'}])
         self.draw_ui(stdscr)
 
     def populate_rooms(self):
