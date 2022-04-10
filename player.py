@@ -101,9 +101,16 @@ class Player:
         if noneEquipped:
             self.equipped = Weapon('your fists', 'your fists', 'Just your fists.', 2)
         for atk in range(self.stats['attackSpeed']):
-            enemy.deal_damage(self.equipped.atk * (abs(self.stats['strength'] - 1) * .9 + 1))
+            if enemy.damage(self.equipped.atk * (abs(self.stats['strength'] - 1) * .9 + 1)):
+                return
         if noneEquipped:
             self.equipped = None
+
+    def damage(self, amt, enemy):
+        self.hp -= amt
+        if self.hp <= 0:
+            game_over()
+            log_message(f'You were defeated by {enemy.name}. Game over.')
 
     def equip_weapon(self, weapon):
         self.equipped = weapon
