@@ -1,11 +1,9 @@
-from hashlib import new
-
 import requests
 from draw import dec_index, dec_legend_index, get_idx, inc_index, inc_legend_index, is_show_inventory, is_show_legend, toggle_inventory, toggle_legend
-from items import Item, Weapon
+from items import Weapon
 from log import log_message
 import map
-from utils import Point, the, a
+from utils import Point, the
 import curses
 from enum import Enum
 
