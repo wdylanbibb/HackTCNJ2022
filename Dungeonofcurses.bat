@@ -1,4 +1,4 @@
 @echo off
 
-pip install users pyyaml curses windows-curses requests pathfinding
+pip install users pyyaml windows-curses requests pathfinding
 python main.py
