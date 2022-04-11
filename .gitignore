@@ -127,5 +127,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
-curses-2.2.1+utf8-cp310-cp310-win_amd64.whl

@@ -1,3 +1,4 @@
+import os
 import requests
 from NPC import get_random_NPC
 from draw import draw_box, draw_inventory, draw_label, draw_label_centered, draw_legend, toggle_inventory
@@ -81,7 +82,7 @@ class Game:
         self.draw_npcs(stdscr)
         self.draw_player(stdscr)
         draw_inventory(stdscr, self.player.inventory, self.player.equipped)
-        draw_legend(stdscr, [{'key': '>', 'value': 'stairs'}, {'key': 'u', 'value': 'cocktail'}, {'key': '%', 'value': 'food'}, {'key': '/', 'value': 'weapon'}, {'key': 'y', 'value': 'Your Mother'}, {'key': 't', 'value': 'Tom Cruise'}, {'key': 'w', 'value': 'werewolf'}, {'key': 'o', 'value': 'ogre'}, {'key': 'j', 'value': 'Jolly Green Giant'}, {'key': 'g', 'value': 'goblin'}, {'key': 'b', 'value': 'ball python'}, {'key': 'i', 'value': 'insurance salesman'}, {'key': 'r', 'value': 'rose-bellied ferret'}])
+        draw_legend(stdscr, [{'key': '>', 'value': 'stairs'}, {'key': 'u', 'value': 'cocktail'}, {'key': '%', 'value': 'food'}, {'key': '/', 'value': 'weapon'}, {'key': '☺', 'value': 'NPC'}, {'key': 'y', 'value': 'Your Mother'}, {'key': 't', 'value': 'Tom Cruise'}, {'key': 'w', 'value': 'werewolf'}, {'key': 'o', 'value': 'ogre'}, {'key': 'j', 'value': 'Jolly Green Giant'}, {'key': 'g', 'value': 'goblin'}, {'key': 'b', 'value': 'ball python'}, {'key': 'i', 'value': 'insurance salesman'}, {'key': 'r', 'value': 'rose-bellied ferret'}])
         self.draw_ui(stdscr)
 
     def populate_rooms(self):
@@ -163,7 +164,7 @@ def game_loop(stdscr, gs):
     log.log_message("Welcome to the Dungeon of Curses!")
 
     # Loop where k is the last character pressed
-    while not (gs.introduced and k == ord('q')):
+    while not (gs.introduced and k == ord('q')) and k != 3:
         # Initialization
         if k == curses.KEY_RESIZE:
             curses.resize_term(0, 0)
@@ -229,8 +230,6 @@ def game_loop(stdscr, gs):
                 draw_label_centered(stdscr, (height // 2) - 2, '  \_____|\__,_|_| |_| |_|\___|  \____/  \_/ \___|_|   ')
                 draw_label_centered(stdscr, (height // 2) - 1, '                                                      ')
                 draw_label_centered(stdscr, (height // 2), f'☠ Score: {gs.player.score} ☠')
-                draw_label_centered(stdscr, (height // 2) + 1, 'Press l to view leaderboard.')
-                draw_label_centered(stdscr, (height // 2) + 2, '☠ Press Q to Quit ☠')
             else:
                 curses.init_pair(6, curses.COLOR_YELLOW, curses.COLOR_BLACK)
                 curses.init_pair(7, curses.COLOR_RED, curses.COLOR_BLACK)
@@ -253,10 +252,14 @@ def game_loop(stdscr, gs):
                         draw_label_centered(stdscr, i + 11, f'{score["user"]}: {score["score"]} points', curses.color_pair(9))
                     else:
                         draw_label_centered(stdscr, i + 11, f'{score["user"]}: {score["score"]} points')
-                draw_label_centered(stdscr, 20, 'Press l to stop viewing leaderboard.');
-                draw_label_centered(stdscr, 21, '☠ Press Q to Quit ☠')
+            draw_label_centered(stdscr, (height // 2) + 1, 'Press l to view leaderboard.')
+            draw_label_centered(stdscr, (height // 2) + 2, 'Press space to play again.')
+            draw_label_centered(stdscr, (height // 2) + 3, '☠ Press Q to Quit ☠')
             if (k == ord('l')):
                 leaderboard = not leaderboard
+            if (k == ord(' ')):
+                main()
+                return
         elif not gs.introduced:
             curses.curs_set(0)
 
@@ -297,6 +300,12 @@ def game_loop(stdscr, gs):
         k = stdscr.getch()
 
         stdscr.refresh()
+    stdscr.erase()
+    stdscr.refresh()
+    if os.name == 'nt':
+        os.system('cls')
+    else:
+        os.system('clear')
 
 def main():
 

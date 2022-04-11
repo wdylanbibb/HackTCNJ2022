@@ -1,7 +1,7 @@
 weapons:
   Revolver:
     description: an old battered revolver
-    detailedDescription: No bullet baby boy.
+    detailedDescription: Hmm... No bullets.
     damage: 5
 
   Katana:
