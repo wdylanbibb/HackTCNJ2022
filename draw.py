@@ -101,7 +101,7 @@ def draw_inventory(stdscr, inventory, equipped):
             words = re.split(r"\s+", item.get_name())
             msg = ''
             for word in words:
-                
+
                 if len(word) + 1 + len(msg) < 30:
                     msg += word + ' '
                 else:
@@ -142,7 +142,7 @@ def draw_legend(stdscr, legend):
             words = re.split(r"\s+", item['key'] + ' - ' + item['value'])
             msg = ''
             for word in words:
-                
+
                 if len(word) + 1 + len(msg) < 30:
                     msg += word + ' '
                 else:
