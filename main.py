@@ -161,6 +161,8 @@ def game_loop(stdscr, gs):
     curses.start_color()
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
+    last_pressed = 0
+
     log.log_message("Welcome to the Dungeon of Curses!")
 
     # Loop where k is the last character pressed
@@ -266,7 +268,7 @@ def game_loop(stdscr, gs):
             if 32 <= k <= 126:
                 player_name += chr(k) if k in range(0x110000) else ''
             else:
-                if k == 127:
+                if k == 8 if os.name == 'nt' else 127:
                     player_name = player_name[:-1]
                 elif k == ord('\n'):
                     gs.introduced = True
@@ -298,6 +300,15 @@ def game_loop(stdscr, gs):
 
         # Wait for next input
         k = stdscr.getch()
+
+        # curses.ungetch(k)
+
+        # kk = stdscr.getstr()
+
+        if k != -1:
+            last_pressed = k
+
+        # draw_label(stdscr, Point(0, 0), str(last_pressed))
 
         stdscr.refresh()
     stdscr.erase()
