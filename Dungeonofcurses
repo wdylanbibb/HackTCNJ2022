@@ -1,4 +1,4 @@
 #! /bin/sh
 
-pip install users pyyaml curses requests pathfinding
-python main.py
+pip3 install users pyyaml curses requests pathfinding playsound==1.2.2
+python3 main.py

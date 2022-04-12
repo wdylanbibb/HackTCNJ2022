@@ -7,3 +7,5 @@ The game is lighthearted game written in Python, and much of the development was
 - [MealDB](https://www.themealdb.com/api.php) and [CocktailDB](https://www.thecocktaildb.com/api.php) APIs
 - [YAML file reading](https://pyyaml.org/)
 - [A* pathfinding](https://pypi.org/project/pathfinding/)
+
+There is also a public leaderboard API located at [https://dungeon-of-curses.herokuapp.com/highscores]
