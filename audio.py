@@ -1,7 +1,9 @@
-from threading import Thread
+from threading import Thread, main_thread
 import time
 from playsound import playsound
 from librosa import get_duration
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 import pygame.mixer as mixer
 
@@ -58,6 +60,7 @@ def unpause_music():
 
 def song_finished():
     global currIndex
+    if len(song_queue) == 0: return
     if not song_queue[currIndex]['loop']:
         if loop_queue:
             currIndex = (currIndex + 1) % len(song_queue)
@@ -81,11 +84,15 @@ def play_next():
     def check_event():
         t = currThread
         while currThread == t:
+            if not main_thread().is_alive(): return
             for ev in pygame.event.get():
                 if ev.type == 100:
                     song_finished()
     currThread = Thread(target=check_event, daemon=True)
-    currThread.start()
+    try:
+        currThread.start()
+    except:
+        return
 
 def pause_music():
     if mixer.music.get_busy():

@@ -1,7 +1,7 @@
 import os
 import requests
 from NPC import get_random_NPC
-from audio import add_song_to_queue, init_music, play_next, set_music_vol
+from audio import add_song_to_queue, clear_queue, init_music, play_next, set_music_vol
 from draw import draw_box, draw_inventory, draw_label, draw_label_centered, draw_legend, toggle_inventory
 from enemy import get_random_enemy
 from items import Weapon
@@ -318,6 +318,7 @@ def game_loop(stdscr, gs):
         stdscr.refresh()
     stdscr.erase()
     stdscr.refresh()
+    clear_queue()
     if os.name == 'nt':
         os.system('cls')
     else:

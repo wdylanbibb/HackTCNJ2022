@@ -1,6 +1,5 @@
 import re
 
-
 logs: list[str] = []
 
 def log_message(msg: str):
