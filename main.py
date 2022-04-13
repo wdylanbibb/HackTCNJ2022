@@ -1,6 +1,7 @@
 import os
 import requests
 from NPC import get_random_NPC
+from audio import add_song_to_queue, init_music, play_next, set_music_vol
 from draw import draw_box, draw_inventory, draw_label, draw_label_centered, draw_legend, toggle_inventory
 from enemy import get_random_enemy
 from items import Weapon
@@ -22,6 +23,9 @@ class Game:
         self.enemies = []
         self.npcs = []
         self.depth = 1
+        init_music()
+        add_song_to_queue('DOC-song', loop=True)
+        set_music_vol(0.2)
         import_items()
         self.populate_rooms()
         self.is_dead = False
@@ -270,6 +274,7 @@ def game_loop(stdscr, gs):
                     player_name = player_name[:-1]
                 elif k == ord('\n'):
                     gs.introduced = True
+                    play_next()
                     gs.player.name = player_name
 
             curses.init_pair(10, curses.COLOR_RED, curses.COLOR_BLACK)
