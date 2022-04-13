@@ -1,7 +1,8 @@
 import os
+import time
 import requests
 from NPC import get_random_NPC
-from audio import add_song_to_queue, clear_queue, init_music, play_next, set_music_vol
+from audio import add_song_to_queue, clear_queue, init_music, play_next, play_sound, set_music_vol
 from draw import draw_box, draw_inventory, draw_label, draw_label_centered, draw_legend, toggle_inventory
 from enemy import get_random_enemy
 from items import Weapon
@@ -172,6 +173,7 @@ def game_loop(stdscr, gs):
     # Loop where k is the last character pressed
     while not (gs.introduced and k == ord('q')) and k != 3:
         # Initialization
+        global leaderboard
         if k == curses.KEY_RESIZE:
             curses.resize_term(0, 0)
         stdscr.erase()
@@ -198,7 +200,14 @@ def game_loop(stdscr, gs):
                             gs.enemy_turn()
 
                             if gs.player.hp <= 0:
+                                requests.post('https://dungeon-of-curses.herokuapp.com/highscores', json={'user': gs.player.name, 'score': gs.player.score})
+                                play_sound('death')
+                                clear_queue()
+                                time.sleep(0.5)
                                 gs.is_dead = True
+                                leaderboard = False
+                                highscores = requests.get('https://dungeon-of-curses.herokuapp.com/highscores').json()
+                                k = -1
                         case PlayerInputResult.Nothing:
                             # Nothing
                             pass
@@ -215,7 +224,6 @@ def game_loop(stdscr, gs):
 
         cursor_y = max(0, cursor_y)
         cursor_y = min(height-1, cursor_y)
-        global leaderboard
 
 
         if height <= 37 - 1 or width <= 80 - 1:
@@ -248,7 +256,6 @@ def game_loop(stdscr, gs):
                 draw_label_centered(stdscr, 7, ' | |____| |____ / ____ \| |__| | |____| | \ \| |_) | |__| / ____ \| | \ \| |__| |', curses.color_pair(6))
                 draw_label_centered(stdscr, 8, ' |______|______/_/    \_\_____/|______|_|  \_\____/ \____/_/    \_\_|  \_\_____/ ', curses.color_pair(6))
                 draw_label_centered(stdscr, 9, '─────────────────────────────────────────────────────────────────────────────────', curses.color_pair(6))
-                highscores = requests.get('https://dungeon-of-curses.herokuapp.com/highscores').json()
                 for i, score in enumerate(highscores):
                     if i == 0:
                         draw_label_centered(stdscr, i + 11, f'{score["user"]}: {score["score"]} points', curses.color_pair(7))
@@ -275,9 +282,13 @@ def game_loop(stdscr, gs):
                 if k == 8 if os.name == 'nt' else 127:
                     player_name = player_name[:-1]
                 elif k == ord('\n'):
-                    gs.introduced = True
-                    play_next()
-                    gs.player.name = player_name
+                    if player_name.isspace() or not player_name:
+                        # bad name
+                        pass
+                    else:
+                        gs.introduced = True
+                        play_next()
+                        gs.player.name = player_name.strip()
 
             curses.init_pair(10, curses.COLOR_RED, curses.COLOR_BLACK)
             curses.init_pair(11, curses.COLOR_YELLOW, curses.COLOR_BLACK)
