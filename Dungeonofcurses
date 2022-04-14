@@ -1,4 +1,4 @@
 #! /bin/sh
 
-pip install users pyyaml curses windows-curses requests pathfinding
-python main.py
+pip3 install users pyyaml curses windows-curses requests pathfinding
+python3 main.py
