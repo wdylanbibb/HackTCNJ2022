@@ -1,5 +1,6 @@
 import re
 from log import log_message
+from audio import play_sound
 from utils import Point, Rect
 
 
@@ -29,6 +30,7 @@ lastIndex = -1
 showLegend = False
 legIndex = 0
 legStartIdx = 0
+lastLegIdx = -1
 
 def toggle_inventory() -> bool:
     global showInventory, showLegend, invIndex, invStartIdx, lastIndex
@@ -58,6 +60,7 @@ def toggle_legend() -> bool:
     showInventory = False
     legIndex = 0
     legStartIdx = 0
+    lastLegIdx = -1
 
 def is_show_legend():
     return showLegend
@@ -113,10 +116,12 @@ def draw_inventory(stdscr, inventory, equipped):
             draw_label(stdscr, Point(40, 27), '☟')
         if invIndex >= 0 and lastIndex != invIndex:
             log_message(inventory[invIndex].detailedDesc)
+            if lastIndex != -1:
+                play_sound('select')
         lastIndex = invIndex
 
 def draw_legend(stdscr, legend):
-    global showLegend, legIndex, legStartIdx
+    global showLegend, legIndex, legStartIdx, lastLegIdx
 
     if showLegend:
         if legIndex < legStartIdx:
@@ -141,7 +146,7 @@ def draw_legend(stdscr, legend):
             words = re.split(r"\s+", item['key'] + ' - ' + item['value'])
             msg = ''
             for word in words:
-                
+
                 if len(word) + 1 + len(msg) < 30:
                     msg += word + ' '
                 else:
@@ -152,3 +157,6 @@ def draw_legend(stdscr, legend):
             draw_label(stdscr, Point(18, 14 + (idx + offset) * 2), ('> ' if idx + legStartIdx == legIndex and firstLine else '') + msg)
         if len(legend) - 1 > legStartIdx + 5:
             draw_label(stdscr, Point(40, 27), '☟')
+        if legIndex >= 0 and lastLegIdx != legIndex and lastLegIdx != -1:
+            play_sound('select')
+        lastLegIdx = legIndex

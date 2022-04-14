@@ -1,9 +1,7 @@
-import random
 from log import log_message
 import names
 from items import Item
 from utils import Point
-import requests
 
 from yamlReader import get_annoyed_dialog, get_random_primary_line, get_random_return_line
 

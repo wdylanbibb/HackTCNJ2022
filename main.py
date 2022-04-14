@@ -1,6 +1,8 @@
 import os
+import time
 import requests
 from NPC import get_random_NPC
+from audio import add_song_to_queue, clear_queue, init_music, play_next, play_sound, set_music_vol
 from draw import draw_box, draw_inventory, draw_label, draw_label_centered, draw_legend, toggle_inventory
 from enemy import get_random_enemy
 from items import Weapon
@@ -22,6 +24,9 @@ class Game:
         self.enemies = []
         self.npcs = []
         self.depth = 1
+        init_music()
+        add_song_to_queue('DOC-song', loop=True)
+        set_music_vol(0.2)
         import_items()
         self.populate_rooms()
         self.is_dead = False
@@ -161,11 +166,14 @@ def game_loop(stdscr, gs):
     curses.start_color()
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
+    last_pressed = 0
+
     log.log_message("Welcome to the Dungeon of Curses!")
 
     # Loop where k is the last character pressed
     while not (gs.introduced and k == ord('q')) and k != 3:
         # Initialization
+        global leaderboard
         if k == curses.KEY_RESIZE:
             curses.resize_term(0, 0)
         stdscr.erase()
@@ -192,7 +200,14 @@ def game_loop(stdscr, gs):
                             gs.enemy_turn()
 
                             if gs.player.hp <= 0:
+                                requests.post('https://dungeon-of-curses.herokuapp.com/highscores', json={'user': gs.player.name, 'score': gs.player.score})
+                                play_sound('death')
+                                clear_queue()
+                                time.sleep(0.5)
                                 gs.is_dead = True
+                                leaderboard = False
+                                highscores = requests.get('https://dungeon-of-curses.herokuapp.com/highscores').json()
+                                k = -1
                         case PlayerInputResult.Nothing:
                             # Nothing
                             pass
@@ -209,7 +224,6 @@ def game_loop(stdscr, gs):
 
         cursor_y = max(0, cursor_y)
         cursor_y = min(height-1, cursor_y)
-        global leaderboard
 
 
         if height <= 37 - 1 or width <= 80 - 1:
@@ -242,7 +256,6 @@ def game_loop(stdscr, gs):
                 draw_label_centered(stdscr, 7, ' | |____| |____ / ____ \| |__| | |____| | \ \| |_) | |__| / ____ \| | \ \| |__| |', curses.color_pair(6))
                 draw_label_centered(stdscr, 8, ' |______|______/_/    \_\_____/|______|_|  \_\____/ \____/_/    \_\_|  \_\_____/ ', curses.color_pair(6))
                 draw_label_centered(stdscr, 9, '─────────────────────────────────────────────────────────────────────────────────', curses.color_pair(6))
-                highscores = requests.get('https://dungeon-of-curses.herokuapp.com/highscores').json()
                 for i, score in enumerate(highscores):
                     if i == 0:
                         draw_label_centered(stdscr, i + 11, f'{score["user"]}: {score["score"]} points', curses.color_pair(7))
@@ -266,11 +279,16 @@ def game_loop(stdscr, gs):
             if 32 <= k <= 126:
                 player_name += chr(k) if k in range(0x110000) else ''
             else:
-                if k == 127:
+                if k == 8 if os.name == 'nt' else 127:
                     player_name = player_name[:-1]
                 elif k == ord('\n'):
-                    gs.introduced = True
-                    gs.player.name = player_name
+                    if player_name.isspace() or not player_name:
+                        # bad name
+                        pass
+                    else:
+                        gs.introduced = True
+                        play_next()
+                        gs.player.name = player_name.strip()
 
             curses.init_pair(10, curses.COLOR_RED, curses.COLOR_BLACK)
             curses.init_pair(11, curses.COLOR_YELLOW, curses.COLOR_BLACK)
@@ -299,9 +317,19 @@ def game_loop(stdscr, gs):
         # Wait for next input
         k = stdscr.getch()
 
+        # curses.ungetch(k)
+
+        # kk = stdscr.getstr()
+
+        if k != -1:
+            last_pressed = k
+
+        # draw_label(stdscr, Point(0, 0), str(last_pressed))
+
         stdscr.refresh()
     stdscr.erase()
     stdscr.refresh()
+    clear_queue()
     if os.name == 'nt':
         os.system('cls')
     else:

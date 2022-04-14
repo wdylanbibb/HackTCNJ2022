@@ -3,6 +3,7 @@ from draw import dec_index, dec_legend_index, get_idx, inc_index, inc_legend_ind
 from items import Weapon
 from log import log_message
 import map
+from audio import play_sound
 from utils import Point, the
 import curses
 from enum import Enum
@@ -157,9 +158,9 @@ class Player:
 
     def damage(self, amt, enemy):
         self.hp -= amt
+        play_sound('hit')
         if self.hp <= 0:
             log_message(f'You were defeated by {the(enemy.type)}{enemy.type}. Game over.')
-            requests.post('https://dungeon-of-curses.herokuapp.com/highscores', json={'user': self.name, 'score': self.score})
 
     def equip_weapon(self, weapon):
         self.equipped = weapon

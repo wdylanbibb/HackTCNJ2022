@@ -1,8 +1,6 @@
-import math
 import re
 from log import log_message
 from utils import Point
-
 
 class Item:
     def __init__(self, name: str, description: str, detailedDesc: str, cocktail=False) -> None:
