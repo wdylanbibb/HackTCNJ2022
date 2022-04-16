@@ -42,28 +42,26 @@ class Enemy:
         if collides:
             self.active = False
             return
-        if dist < 10:
-            self.active = True
-            if dist <= 1:
-                # attack player
-                self.attack(gs.player)
-                log_message(f'{self.type.title()} attacks you for {self.weapon.atk:.1f} damage!!')
-            else:
-                # Persue player
+        self.active = True
+        if dist <= 1:
+            # attack player
+            self.attack(gs.player)
+            log_message(f'{self.type.title()} attacks you for {self.weapon.atk:.1f} damage!!')
+        else:
+            # Persue player
 
-                blocked_map = gs.map.copy()
-                for enemy in gs.enemies:
-                    if enemy == self:
-                        continue
-                    blocked_map[xy_idx(enemy.position.x, enemy.position.y)] = TileType.WALL
-                for npc in gs.npcs:
-                    blocked_map[xy_idx(npc.position.x, npc.position.y)] = TileType.WALL
+            blocked_map = gs.map.copy()
+            for enemy in gs.enemies:
+                if enemy == self:
+                    continue
+                blocked_map[xy_idx(enemy.position.x, enemy.position.y)] = TileType.WALL
+            for npc in gs.npcs:
+                blocked_map[xy_idx(npc.position.x, npc.position.y)] = TileType.WALL
 
-                path = get_path_to(blocked_map, self.position, gs.player.position)
+            path = get_path_to(blocked_map, self.position, gs.player.position)
 
-                if len(path) > 0:
-                    self.position = Point(path[1 if len(path) > 1 else 0][0], path[1 if len(path) > 1 else 0][1])
-        else: self.active = False
+            if len(path) > 0:
+                self.position = Point(path[1 if len(path) > 1 else 0][0], path[1 if len(path) > 1 else 0][1])
 
 def get_random_enemy(depth: int):
     choices = ['Jolly Green Giant', 'ogre', 'goblin', 'werewolf', 'insurance salesman', 'Tom Cruise', 'Your Mother', 'ball python', 'rose-bellied ferret']
