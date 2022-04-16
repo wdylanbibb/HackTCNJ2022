@@ -23,7 +23,7 @@ class Weapon(Item):
     def __init__(self, name: str, description: str, detailedDesc: str, atk: int) -> None:
         super().__init__(name, description, detailedDesc)
         self.atk = atk
-    
+
     def get_name(self):
         return self.name
 
