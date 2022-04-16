@@ -235,6 +235,7 @@ def game_loop(stdscr, gs):
 
         if height <= 37 - 1 or width <= 80 - 1:
             curses.curs_set(0)
+            stdscr.clear()
             draw_label_centered(stdscr, (height // 2) - 1, 'Your screen is too small!')
             draw_label_centered(stdscr, (height // 2), 'Required: 80x37')
             draw_label_centered(stdscr, (height // 2) + 1, f'Current Size: {width}x{height}')
