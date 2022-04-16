@@ -3,7 +3,7 @@ import random
 from items import Weapon
 from log import log_message
 from map import TileType, get_2d_map, get_path_to, p_idx, xy_idx
-from utils import Point, a
+from utils import Point, Ray, a
 from yamlReader import get_random_weapon
 
 class Enemy:
@@ -37,6 +37,9 @@ class Enemy:
 
     def turn(self, gs):
         dist = gs.player.position.distance(self.position)
+        collides = Ray(self.position, gs.player.position).collides(gs.map)
+        if collides:
+            return
         if dist < 7:
             if dist <= 1:
                 # attack player

@@ -1,7 +1,6 @@
 from __future__ import annotations
 from enum import IntEnum
 import random
-from utils import Point, Rect
 
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
@@ -24,10 +23,10 @@ def roll_dice(n: int, die_type: int) -> int:
 def xy_idx(x: int, y: int) -> int:
     return (y * MAP_WIDTH) + x
 
-def p_idx(p: Point) -> int:
+def p_idx(p) -> int:
     return (p.y * MAP_WIDTH) + p.x
 
-def apply_room_to_map(room: Rect, map: Map):
+def apply_room_to_map(room, map: Map):
     for y in range(room.y + 1, room.y + room.height):
         for x in range(room.x + 1, room.x + room.width):
             map[xy_idx(x, y)] = TileType.FLOOR
@@ -44,11 +43,11 @@ def apply_vertical_tunnel(map: Map, y1: int, y2: int, x: int):
         if idx > 0 and idx < MAP_WIDTH*MAP_HEIGHT:
             map[idx] = TileType.FLOOR
 
-def new_map_rooms_and_corridors(max_rooms: int, min_size: int, max_size: int) -> tuple(list[Rect], list[TileType]):
-
+def new_map_rooms_and_corridors(max_rooms: int, min_size: int, max_size: int) -> tuple(list, list[TileType]):
+    from utils import Rect
     map = [TileType.WALL] * MAP_SIZE
 
-    rooms: list[Rect] = []
+    rooms = []
 
     for _i in range(0, max_rooms):
         w = random.randint(min_size, max_size)

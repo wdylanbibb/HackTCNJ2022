@@ -296,6 +296,7 @@ def game_loop(stdscr, gs):
                         stdscr.erase()
                         stdscr.refresh()
                         gs.player.name = player_name.strip()
+                        continue
 
             if not gs.introduced:
                 curses.init_pair(10, curses.COLOR_RED, curses.COLOR_BLACK)

@@ -1,6 +1,8 @@
 from __future__ import annotations
 import math
 
+from map import TileType, xy_idx
+
 class Rect:
     def __init__(self, x: int, y: int, width: int, height: int) -> None:
         self.x = x
@@ -52,6 +54,48 @@ class Point:
 
     def distance(self, other: Point) -> float:
         return math.sqrt((other.x - self.x) ** 2 + (other.y - self.y) ** 2)
+
+class Ray:
+    def __init__(self, start: Point, end: Point):
+        self.start = start
+        self.end = end
+
+    def collides(self, map: list[TileType]):
+        x1 = self.start.x
+        x2 = self.end.x
+        y1 = self.start.y
+        y2 = self.end.y
+ 
+        dx = x2 - x1
+        dy = y2 - y1
+        isSteep = abs(dy) > abs(dx)
+
+        if isSteep:
+            y1, x1 = x1, y1
+            y2, x2 = x2, y2
+
+        if x1 > x2:
+            x1, x2 = x2, x1
+            y1, y2 = y2, y1
+        
+        dx = x2 - x1
+        dy = y2 - y1
+
+        error = dx // 2
+        ystep = 1 if y1 < y2 else -1
+
+        y = y1
+        for x in range(x1, x2 + 1):
+            coords = (y, x) if isSteep else (x, y)
+            if map[xy_idx(coords[0], coords[1])] == TileType.WALL:
+                return True
+            error -= abs(dy)
+            if error < 0:
+                y += ystep
+                error += dx
+
+        return False
+
 
 # Returns an if string parameter n starts with a vowel, a otherwise (i think it's name is pretty funny)
 def a(n) -> str:
