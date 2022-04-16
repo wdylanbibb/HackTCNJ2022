@@ -11,7 +11,7 @@ class NPC:
         self.inventory: list[Item] = []
         self.initialDialog = initialDialog
         self.returnDialog = returnDialog
-        self.numVisited = 1
+        self.numVisited = 0
 
     def set_position(self, position: Point):
         self.position = position

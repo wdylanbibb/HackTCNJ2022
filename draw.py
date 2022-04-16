@@ -2,7 +2,50 @@ import re
 from log import log_message
 from audio import play_sound
 from utils import Point, Rect
+from PIL import Image, ImageOps
+import curses
 
+indexedImgs = {}
+
+def draw_img(stdscr, imgName, x, y, width, height, *, bw = False):
+    numColors = 8
+    if imgName not in indexedImgs:
+        try:
+            img = Image.open(imgName)
+        except Exception as e:
+            print(e)
+            return
+        if not curses.has_colors() or not curses.can_change_color():
+            return
+        if bw:
+            img = img.convert('L').convert('RGB')
+        img = ImageOps.pad(ImageOps.contain(img, (width, height * 2)), (width, height * 2), color=(0, 0, 0), centering=(0.5, 0.5)).quantize(min(240, numColors))
+    else:
+        img = indexedImgs[imgName]
+    palette = []
+    pal = img.getpalette()
+    zero = False
+    for i in range(len(pal) // 3):
+        if pal[i * 3] == 0 and pal[i * 3 + 1] == 0 and pal[i * 3 + 2] == 0:
+            if not zero and i < 240:
+                zero = True
+            else: continue
+        palette.append((pal[i * 3], pal[i * 3 + 1], pal[i * 3 + 2]))
+    for i, color in enumerate(palette):
+        curses.init_color(i + 16, color[0] * 1000 // 255, color[1] * 1000 // 255, color[2] * 1000 // 255)
+    for i, _ in enumerate(palette):
+        for j, _ in enumerate(palette):
+            curses.init_pair(i + j * numColors + 16, i + 16, j + 16)
+    stdscr.refresh()
+    for i in range(width):
+        for j in range(height):
+            topColor = img.getpixel((i, j * 2))
+            botColor = img.getpixel((i, j * 2 + 1))
+            if palette[topColor] == (0, 0, 0) and palette[botColor] == (0, 0, 0):
+                continue
+            stdscr.addstr(j + y, i + x, '▀', curses.color_pair(topColor + botColor * numColors + 16))
+    stdscr.refresh()
+    indexedImgs[imgName] = img
 
 def draw_box(stdscr, rect: Rect):
     stdscr.addstr(rect.y, rect.x, "┌" + ("─" * (rect.width - 2)) + "┐")

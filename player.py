@@ -160,6 +160,7 @@ class Player:
         self.hp -= amt
         play_sound('hit')
         if self.hp <= 0:
+            self.hp = 0
             log_message(f'You were defeated by {the(enemy.type)}{enemy.type}. Game over.')
 
     def equip_weapon(self, weapon):
