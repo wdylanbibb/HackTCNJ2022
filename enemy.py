@@ -15,6 +15,7 @@ class Enemy:
         self.hp = hp
         self.max_hp = hp
         self.weapon = weapon
+        self.active = False
 
     def __str__(self) -> str:
         return f'<Enemy - Type: {self.type}, Defense: {self.defense}, HP: {self.hp}, Weapon: {self.weapon}>'
@@ -39,8 +40,10 @@ class Enemy:
         dist = gs.player.position.distance(self.position)
         collides = Ray(self.position, gs.player.position).collides(gs.map)
         if collides:
+            self.active = False
             return
-        if dist < 7:
+        if dist < 10:
+            self.active = True
             if dist <= 1:
                 # attack player
                 self.attack(gs.player)
@@ -60,6 +63,7 @@ class Enemy:
 
                 if len(path) > 0:
                     self.position = Point(path[1 if len(path) > 1 else 0][0], path[1 if len(path) > 1 else 0][1])
+        else: self.active = False
 
 def get_random_enemy(depth: int):
     choices = ['Jolly Green Giant', 'ogre', 'goblin', 'werewolf', 'insurance salesman', 'Tom Cruise', 'Your Mother', 'ball python', 'rose-bellied ferret']

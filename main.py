@@ -17,9 +17,9 @@ from yamlReader import get_random_health_item, get_random_potion, get_random_wea
 from utils import Point, Rect
 
 class Game:
-    def __init__(self) -> None:
+    def __init__(self, name=None) -> None:
         self.room_list, self.map = map_tools.new_map_rooms_and_corridors(30, 6, 10)
-        self.player = Player(Point(self.room_list[0].center()[0], self.room_list[0].center()[1]), "Player", 100, 1, 1)
+        self.player = Player(Point(self.room_list[0].center()[0], self.room_list[0].center()[1]), name if name is not None else "", 100, 1, 1)
         self.items = []
         self.enemies = []
         self.npcs = []
@@ -30,7 +30,10 @@ class Game:
         import_items()
         self.populate_rooms()
         self.is_dead = False
-        self.introduced = False
+        self.introduced = False if name is None else True
+        log.clear_log()
+        if name is not None:
+            play_next()
 
     def draw_map(self, stdscr):
         for x in range(map_tools.MAP_WIDTH):
@@ -60,9 +63,10 @@ class Game:
             stdscr.addstr(npc.position.y, npc.position.x, '☺', curses.color_pair(2))
 
     def draw_enemies(self, stdscr):
-        curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
+        curses.init_pair(3, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
+        curses.init_pair(5, curses.COLOR_RED, curses.COLOR_BLACK)
         for enemy in self.enemies:
-            stdscr.addstr(enemy.position.y, enemy.position.x, enemy.type.lower()[0], curses.color_pair(3))
+            stdscr.addstr(enemy.position.y, enemy.position.x, enemy.type.lower()[0], curses.color_pair(5 if enemy.active else 3))
 
     def draw_player(self, stdscr):
         curses.init_pair(4, curses.COLOR_BLUE, curses.COLOR_BLACK)
@@ -274,7 +278,7 @@ def game_loop(stdscr, gs):
             if (k == ord('l')):
                 leaderboard = not leaderboard
             if (k == ord(' ')):
-                main()
+                play_game(name=gs.player.name)
                 return
             if (k == ord('c')):
                 curses.init_color(curses.COLOR_YELLOW, 0, 1000, 1000)
@@ -345,8 +349,10 @@ def game_loop(stdscr, gs):
         os.system('clear')
 
 def main():
+    play_game()
 
-    gs = Game()
+def play_game(name: str = None):
+    gs = Game(name)
 
     curses.wrapper(game_loop, gs)
 
