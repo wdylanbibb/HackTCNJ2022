@@ -110,4 +110,4 @@ def the(n) -> str:
     if n[0].isupper():
         return ''
     
-    return 'The '
+    return 'the '

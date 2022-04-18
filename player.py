@@ -125,6 +125,7 @@ class Player:
                     self.inventory.pop(get_idx())
                 return PlayerInputResult.UseItem
             elif event == ord('g'):
+                if len(self.inventory) == 0: return PlayerInputResult.Nothing
                 item = self.inventory[get_idx()]
                 item.position = self.position.copy()
                 gs.items.append(item)
@@ -147,11 +148,13 @@ class Player:
             self.equipped = Weapon('your fists', 'your fists', 'Just your fists.', 2)
         for atk in range(self.stats['attackSpeed']):
             dmg = self.equipped.atk * (abs(self.stats['strength'] - 1) * .1 + 1)
-            log_message(f'You deal {dmg} damage to {enemy.type}')
+            log_message(f'You deal {dmg} damage to {the(enemy.type)}{enemy.type}')
             if enemy.damage(dmg, gs):
-                log_message(f'{the(enemy.type)}{enemy.type} has been vanquished!')
+                log_message(f'{the(enemy.type).title()}{enemy.type} has been vanquished!')
                 gs.enemies.remove(enemy)
                 self.score += int(enemy.max_hp)
+                if noneEquipped:
+                    self.equipped = None
                 return
         if noneEquipped:
             self.equipped = None
