@@ -120,6 +120,7 @@ class Player:
             elif event == ord('k') or event == curses.KEY_UP:
                 dec_index()
             elif event == ord(' '):
+                if len(self.inventory) == 0: return PlayerInputResult.Nothing
                 if not self.inventory[get_idx()].use(self):
                     self.score += 1
                     self.inventory.pop(get_idx())
