@@ -32,6 +32,7 @@ class Game:
         self.is_dead = False
         self.introduced = False if name is None else True
         log.clear_log()
+        log.log_message("Welcome to the Dungeon of Curses!")
         if name is not None:
             play_next()
 
@@ -192,10 +193,8 @@ def game_loop(stdscr, gs):
 
     last_pressed = 0
 
-    log.log_message("Welcome to the Dungeon of Curses!")
     stdscr.nodelay(False)
     curses.mousemask(curses.BUTTON1_CLICKED)
-
     # Loop where k is the last character pressed
     global leaderboard, i
     while not (gs.introduced and k == ord('q')) and k != 3:
@@ -231,9 +230,9 @@ def game_loop(stdscr, gs):
                                 play_sound('death')
                                 clear_queue()
                                 time.sleep(1.5)
-                                gs.is_dead = True
                                 play_sound('laugh', wait=False)
                                 draw_anim(stdscr, 'images/skull', 0, 0, width - 1, height, withBlack=True, repeats=4)
+                                gs.is_dead = True
                                 leaderboard = False
                                 highscores = requests.get('https://dungeon-of-curses.herokuapp.com/highscores').json()
                                 k = -1

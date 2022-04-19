@@ -21,6 +21,12 @@ To install necessary dependencies & run:
 > Dungeonofcurses
 ```
 
+For future invocation, simply run
+
+```
+> python main.py
+```
+
 ## Linux installation:
 
 Make sure you have python 3.10 installed. ([Click here](https://computingforgeeks.com/how-to-install-python-on-ubuntu-linux-system/) for intructions on Ubuntu)
@@ -28,7 +34,7 @@ Make sure you have python 3.10 installed. ([Click here](https://computingforgeek
 Install `ncurses` using apt/pacman/whatever else you use for package management. For example, on Ubuntu, use
 
 ```
-$ sudo apt-gt install libncurses-dev
+$ sudo apt-get install libncurses-dev
 ```
 
 to do so.
