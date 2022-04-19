@@ -3,7 +3,7 @@ import time
 import requests
 from NPC import get_random_NPC
 from audio import add_song_to_queue, clear_queue, init_music, play_next, play_sound, set_music_vol
-from draw import draw_box, draw_img, draw_inventory, draw_label, draw_label_centered, draw_legend, toggle_inventory
+from draw import draw_anim, draw_box, draw_img, draw_inventory, draw_label, draw_label_centered, draw_legend, toggle_inventory
 from enemy import get_random_enemy
 from items import Weapon
 from player import Player, PlayerInputResult
@@ -194,6 +194,7 @@ def game_loop(stdscr, gs):
 
     log.log_message("Welcome to the Dungeon of Curses!")
     stdscr.nodelay(False)
+    curses.mousemask(curses.BUTTON1_CLICKED)
 
     # Loop where k is the last character pressed
     global leaderboard, i
@@ -208,13 +209,13 @@ def game_loop(stdscr, gs):
         #     stdscr.addstr(0, 0, f'{width}, {height}')
         if not gs.is_dead:
             if k == curses.KEY_MOUSE:
-                _, mx, my, _, _ = curses.getmouse()
+                _, mx, my, _, bstate = curses.getmouse()
                 cursor_x = mx
                 cursor_y = my
-
-                [log.log_message("You see " + enemy.description) for enemy in gs.enemies if enemy.position == Point(mx, my)]
-                [log.log_message("You see " + npc.name) for npc in gs.npcs if npc.position == Point(mx, my)]
-                [log.log_message("You see a(n) " + item.name) for item in gs.items if item.position == Point(mx, my)]
+                if bstate == curses.BUTTON1_CLICKED:
+                    [log.log_message("You see " + enemy.description) for enemy in gs.enemies if enemy.position == Point(mx, my)]
+                    [log.log_message("You see " + npc.name) for npc in gs.npcs if npc.position == Point(mx, my)]
+                    [log.log_message("You see a(n) " + item.name) for item in gs.items if item.position == Point(mx, my)]
             else:
                 if gs.introduced:
                     match gs.player.input(k, gs):
@@ -231,6 +232,7 @@ def game_loop(stdscr, gs):
                                 clear_queue()
                                 time.sleep(0.5)
                                 gs.is_dead = True
+                                draw_anim(stdscr, 'images/skull', 0, 0, width - 1, height, withBlack=True, repeats=4)
                                 leaderboard = False
                                 highscores = requests.get('https://dungeon-of-curses.herokuapp.com/highscores').json()
                                 k = -1
@@ -336,7 +338,7 @@ def game_loop(stdscr, gs):
                 draw_label_centered(stdscr, (height // 2) - 2, 'Who knows what you will see next...', curses.color_pair(10))
                 draw_label_centered(stdscr, (height // 2),     'Hello, traveller. What is your name?')
                 draw_label_centered(stdscr, (height // 2) + 1, player_name)
-                draw_img(stdscr, "dungeon.webp", (width // 2) - 50, (height // 2) + 4, 100, 12)
+                draw_img(stdscr, "images/dungeon.webp", (width // 2) - 50, (height // 2) + 4, 100, 12)
         else:
             curses.curs_set(1)
             gs.draw(stdscr)

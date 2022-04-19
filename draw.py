@@ -1,4 +1,6 @@
+import os
 import re
+import time
 from log import log_message
 from audio import play_sound
 from utils import Point, Rect
@@ -7,7 +9,7 @@ import curses
 
 indexedImgs = {}
 
-def draw_img(stdscr, imgName, x, y, width, height, *, bw = False):
+def draw_img(stdscr, imgName, x, y, width, height, *, bw = False, withBlack = False):
     numColors = 8
     if imgName not in indexedImgs:
         try:
@@ -41,11 +43,24 @@ def draw_img(stdscr, imgName, x, y, width, height, *, bw = False):
         for j in range(height):
             topColor = img.getpixel((i, j * 2))
             botColor = img.getpixel((i, j * 2 + 1))
-            if palette[topColor] == (0, 0, 0) and palette[botColor] == (0, 0, 0):
+            if not withBlack and palette[topColor] == (0, 0, 0) and palette[botColor] == (0, 0, 0):
                 continue
             stdscr.addstr(j + y, i + x, '▀', curses.color_pair(topColor + botColor * numColors + 16))
     stdscr.refresh()
     indexedImgs[imgName] = img
+
+def draw_anim(stdscr, dirName, x, y, width, height, *, repeats = 1, bw = False, withBlack = False):
+    if not os.path.isdir(dirName):
+        print(f'Directory not found: {dirName}')
+        return
+    for _ in range(repeats):
+        for i in range(len(os.listdir(dirName))):
+            if not os.path.isfile(f'{dirName}/frame{i}.jpg'):
+                print(f'File not found: {dirName}/frame{i}.jpg')
+                return
+            start_time = time.time()
+            draw_img(stdscr, f'{dirName}/frame{i}.jpg', x, y, width, height, bw=bw, withBlack=withBlack)
+            time.sleep(1 / 15)
 
 def draw_box(stdscr, rect: Rect):
     stdscr.addstr(rect.y, rect.x, "┌" + ("─" * (rect.width - 2)) + "┐")

@@ -90,6 +90,7 @@ class Ray:
             if map[xy_idx(coords[0], coords[1])] == TileType.WALL:
                 return True
             error -= abs(dy)
+            # print(coords)
             if error < 0:
                 y += ystep
                 error += dx

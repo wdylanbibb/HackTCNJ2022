@@ -41,6 +41,16 @@ class Enemy:
         collides = Ray(self.position, gs.player.position).collides(gs.map)
         if collides:
             self.active = False
+            if random.random() < 2 / 3: return
+            direction = random.choice([(0, 1), (0, -1), (0, 0), (1, 0), (-1, 0)])
+            newTile = gs.map[xy_idx(self.position.x + direction[0], self.position.y + direction[1])]
+            if newTile == TileType.WALL: return
+            for enemy in gs.enemies:
+                if enemy.position.x == self.position.x + direction[0] and enemy.position.y == self.position.y + direction[1]: return
+            for npc in gs.npcs:
+                if npc.position.x == self.position.x + direction[0] and npc.position.y == self.position.y + direction[1]: return
+            self.position = Point(self.position.x + direction[0], self.position.y + direction[1])
+
             return
         self.active = True
         if dist <= 1:
@@ -48,7 +58,7 @@ class Enemy:
             self.attack(gs.player)
             log_message(f'{self.type.title()} attacks you for {self.weapon.atk:.1f} damage!!')
         else:
-            # Persue player
+            # Pursue player
 
             blocked_map = gs.map.copy()
             for enemy in gs.enemies:
