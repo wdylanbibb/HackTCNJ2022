@@ -309,7 +309,7 @@ def game_loop(stdscr, gs):
             if 32 <= k <= 126:
                 player_name += chr(k) if k in range(0x110000) else ''
             else:
-                if k == 8 if os.name == 'nt' else 127:
+                if (k == 8 and os.name == 'nt') or k == 127:
                     player_name = player_name[:-1]
                 elif k == ord('\n'):
                     if player_name.isspace() or not player_name:
