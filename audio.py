@@ -10,9 +10,9 @@ import pygame.mixer as mixer
 sound_started = -1
 sound_len = -1
 
-def play_sound(name: str):
+def play_sound(name: str, *, wait = True):
     global sound_started, sound_len
-    if sound_len + sound_started > 0 and sound_len + sound_started > time.time() * 1000: return
+    if wait and sound_len + sound_started > 0 and sound_len + sound_started > time.time() * 1000: return
     sound_len = get_duration(filename=f'sfx/{name}.wav') * 1000
     playsound(f'sfx/{name}.wav', block=False)
     sound_started = round(time.time() * 1000)

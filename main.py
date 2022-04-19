@@ -230,8 +230,9 @@ def game_loop(stdscr, gs):
                                 requests.post('https://dungeon-of-curses.herokuapp.com/highscores', json={'user': gs.player.name, 'score': gs.player.score})
                                 play_sound('death')
                                 clear_queue()
-                                time.sleep(0.5)
+                                time.sleep(1.5)
                                 gs.is_dead = True
+                                play_sound('laugh', wait=False)
                                 draw_anim(stdscr, 'images/skull', 0, 0, width - 1, height, withBlack=True, repeats=4)
                                 leaderboard = False
                                 highscores = requests.get('https://dungeon-of-curses.herokuapp.com/highscores').json()
