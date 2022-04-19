@@ -1,7 +1,7 @@
 from threading import Thread, main_thread
 import time
 from playsound import playsound
-import soundfile as sf
+from pydub import AudioSegment
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
@@ -13,8 +13,7 @@ sound_len = -1
 def play_sound(name: str, *, wait = True):
     global sound_started, sound_len
     if wait and sound_len + sound_started > 0 and sound_len + sound_started > time.time() * 1000: return
-    f = sf.SoundFile(f'sfx/{name}.wav')
-    sound_len = f.frames * 1000 / f.samplerate
+    sound_len = len(AudioSegment.from_wav(f'sfx/{name}.wav'))
     playsound(f'sfx/{name}.wav', block=False)
     sound_started = round(time.time() * 1000)
 
