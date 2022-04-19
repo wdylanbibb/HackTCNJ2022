@@ -1,4 +1,4 @@
 #! /bin/sh
 
-pip3 install users pyyaml curses requests pathfinding playsound==1.2.2 librosa pygame
+pip3 install users pyyaml curses requests pathfinding playsound==1.2.2 soundfile pygame
 python3 main.py
