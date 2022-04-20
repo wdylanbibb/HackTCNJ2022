@@ -1,6 +1,5 @@
 from threading import Thread, main_thread
 import time
-from playsound import playsound
 import soundfile as sf
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
@@ -15,7 +14,7 @@ def play_sound(name: str, *, wait = True):
     if wait and sound_len + sound_started > 0 and sound_len + sound_started > time.time() * 1000: return
     f = sf.SoundFile(f'sfx/{name}.wav')
     sound_len = f.frames * 1000 / f.samplerate
-    Thread(target=playsound, args=(f'sfx/{name}.wav',), daemon=True).start()
+    Thread(target=mixer.Sound(f'sfx/{name}.wav').play, args=(), daemon=True).start()
     sound_started = round(time.time() * 1000)
 
 song_queue: list[dict] = []

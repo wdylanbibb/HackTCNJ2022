@@ -42,7 +42,7 @@ to do so.
 To install necessary dependencies & run:
 
 ```
-$ python3.10 -m pip install users pyyaml requests pathfinding playsound soundfile pygame pillow
+$ python3.10 -m pip install users pyyaml requests pathfinding soundfile pygame pillow
 
 $ python3.10 main.py
 ```
